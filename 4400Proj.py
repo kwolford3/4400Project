@@ -4,9 +4,8 @@ import os
 from re import findall
 
 class CS4400:
-
+#Login Page done
     def __init__(self,win):
-        print("ran?")
         self.loginWin = win
         self.loginWin.title("Login")
         userLab= Label(self.loginWin,text="Username:")
