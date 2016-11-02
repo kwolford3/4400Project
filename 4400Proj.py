@@ -1,5 +1,5 @@
 from tkinter import *
-#import pymysql
+import pymysql
 import os
 from re import findall
 
@@ -22,8 +22,6 @@ class CS4400:
         self.loginBut.grid(row=2,column=0)
         self.regisBut =Button(self.loginWin, text="Register", command = self.Register)
         self.regisBut.grid(row=2,column=1)
-        
-
 
     def Login(self):
         #called by _init_ and register
@@ -71,8 +69,11 @@ class CS4400:
         #Left as redirecting to login page. Can change if needed.
         self.createBut =Button(self.registerWin, text="Create", command = self.Login)
         self.createBut.grid(row=4,column=0)
-
-    #ME PAGE
+        
+    def Main_page(self):
+        #called by ME Page
+        print ("main page")
+        
     def Me_page(self):
         #called by
         #Creates ME window
@@ -85,10 +86,6 @@ class CS4400:
         self.backBut = Button(self.meWin, text = "Back", command = self.Main_page)
         self.backBut.grid(row=2, column=0)
 
-    def Main_page(self):
-        #called by ME Page
-        print ("main page")
-
     def Edit_profile(self):
         #called by Me Page
         print ("edit profile")
@@ -96,8 +93,38 @@ class CS4400:
     def My_app(self):
         #called my Me Page
         print ("my apps")
-    
 
+    def View_proj(self):
+        #called by
+        print ("view project page")
+
+    def View_course(self):
+        #called by
+        print ("view course page")
+
+    def Choose_functionality(self):
+        #called by
+        print ("admin choose functionality page")
+
+    def View_apps(self):
+        #called by
+        print ("admin view apps")
+
+    def Popular_proj(self):
+        #called by
+        print ("admin popular projects page")
+
+    def App_report(self):
+        #called by
+        print("admin view application reports")
+
+    def Add_proj(self):
+        #called by
+        print("admin add project")
+        
+    def Add_course(self):
+        #called by
+        print("admin add course")
     
 
 win = Tk()
