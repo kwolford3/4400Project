@@ -26,6 +26,7 @@ class CS4400:
 
 
     def Login(self):
+        #called by _init_ and register
         username = self.user.get()
         password =self.passw.get()
         print("Logged in")
@@ -33,6 +34,7 @@ class CS4400:
         print(password)
 
     def Register(self):
+        #called by _init_
         print("Registered")
         #Creates registration window
         self.registerWin = win
@@ -72,6 +74,7 @@ class CS4400:
 
     #ME PAGE
     def Me_page(self):
+        #called by
         #Creates ME window
         self.meWin = win
         self.meWin.title("ME")
@@ -83,13 +86,17 @@ class CS4400:
         self.backBut.grid(row=2, column=0)
 
     def Main_page(self):
+        #called by ME Page
         print ("main page")
 
     def Edit_profile(self):
+        #called by Me Page
         print ("edit profile")
 
     def My_app(self):
+        #called my Me Page
         print ("my apps")
+    
 
     
 
