@@ -27,9 +27,18 @@ class CS4400:
         #called by _init_
         username = self.user.get()
         password =self.passw.get()
+        # Need SQL Code to check if login is succesful
+        # need SQL COde to check flag type of user 
+        # if self.flag="Admin":
+            #self.Choose_functionality()
+        #else:
+        # self.flag="Student"
+        
         print("Logged in")
         print(username)
         print(password)
+        self.Main_page() #will need to put under else once sql is added
+       
 
     def Register(self):
         #called by _init_
@@ -80,10 +89,71 @@ class CS4400:
         password =self.passw.get()
         confirmPass = self.conf
         print(username, userEmail, password, confirmPass)
+        print("calling main page")
+        self.Main_page() #ONLY RUN IF A SUCCESFUL REGISTER
         
     def Main_page(self):
         #called by ME Page
-        print ("main page")
+        #also called by a succesfull login page
+       
+        #self.registerWin.withdraw()
+        self.Main_pageWin = Toplevel()
+        self.Main_pageWin.title("Main Page")
+        MainPageLab1 = Label(self.Main_pageWin, text="Title:")
+        MainPageLab1.grid(row=0,column=0)
+       # print ("Main page Should be showing...?")
+        self.MPEntry=StringVar()
+        MainPageEnt=Entry(self.Main_pageWin, width=30, textvariable=self.MPEntry)
+        MainPageEnt.grid(row=0, column=1)
+        MainPageLab2 = Label(self.Main_pageWin, text="Category:")
+        MainPageLab2.grid(row=0,column=2)
+        self.MainPageCat=StringVar()
+        self.MainPageCat.set("Pick a Category")
+        #USE SQL to call list of category names called self.catlist
+        self.catlist=["Add cat1 here"," Add Cat 2 here"]
+        self.MainPagedrop=OptionMenu(self.Main_pageWin,self.MainPageCat,*self.catlist)
+        self.MainPagedrop.grid(row=0,column=3)
+        self.MainPageRow = 0
+        self.AddCatBut =Button(self.Main_pageWin, text="Add a Category", command = self.Add_Cat_MainPage)
+        self.AddCatBut.grid(row=0,column=4)
+
+        MainPageLabDes = Label(self.Main_pageWin,text="Designation:")
+        MainPageLabDes.grid(row=1,column=0)
+        #print("ran")
+        self.MainPageDes=StringVar()
+        self.MainPageDes.set("Please Select")
+        #USE SQL to call list of Designation names called self.deslist
+        self.deslist=["Add des1 here"," Add des2 here"]
+        self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageDes,*self.deslist)
+        self.MainPageDesdrop.grid(row=1,column=1)
+
+        MainPageLabMaj = Label(self.Main_pageWin,text="Major:")
+        MainPageLabMaj.grid(row=2,column=0)
+        #print("ran")
+        self.MainPageMaj=StringVar()
+        self.MainPageMaj.set("Please Select")
+        #USE SQL to call list of Designation names called self.deslist
+        self.majlist=["Add maj1 here"," Add maj2 here"]
+        self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageMaj,*self.majlist)
+        self.MainPageDesdrop.grid(row=2,column=1)
+
+        MainPageLabYear = Label(self.Main_pageWin,text="Year:")
+        MainPageLabYear.grid(row=3,column=0)
+        #print("ran")
+        self.MainPageYear=StringVar()
+        self.MainPageYear.set("Please Select")
+        #USE SQL to call list of Designation names called self.deslist
+        self.yearlist=["Freshman","Sophmore","Junior","Senior"]
+        self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageYear,*self.yearlist)
+        self.MainPageDesdrop.grid(row=3,column=1)
+        
+    def Add_Cat_MainPage(self):
+        #print("adding a cat")
+        self.MainPageRow = self.MainPageRow +1
+        self.MainPagedrop=OptionMenu(self.Main_pageWin,self.MainPageCat,*self.catlist)
+        self.MainPagedrop.grid(row=self.MainPageRow,column=3)
+        self.AddCatBut =Button(self.Main_pageWin, text="Add a Category", command = self.Add_Cat_MainPage)
+        self.AddCatBut.grid(row=self.MainPageRow,column=4)
         
     def Me_page(self):
         #called by
