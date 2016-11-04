@@ -187,11 +187,49 @@ class CS4400:
 
     def Choose_functionality(self):
         #called by
+        self.chooseFunWin = Toplevel()
+        self.chooseFunWin.title("Choose Functionality")
         print ("admin choose functionality page")
 
     def View_apps(self):
-        #called by
-        print ("admin view apps")
+        #called by the "View applications button" in the Choose Functionality Pgae
+
+        #self.chooseFunWin.withdraw()
+
+        #creates View Apps window
+        self.viewAppsWin = Toplevel()
+        self.viewAppsWin.title("Application")
+
+        #frame to put the Apllications in
+        projectFrame = Frame(self.viewAppsWin)
+        projectFrame.grid(row = 0, column = 0, columnspan = 6)
+
+        #Labels for Project, Applicant Major/Year, Status
+        projectLabel =Label(projectFrame, text="Project",width = 20)
+        projectLabel.grid(row = 0, column=0,padx = 5, pady=5 )
+
+        appMajorLabel =Label(projectFrame, text="Applicant Major",width = 20)
+        appMajorLabel.grid(row = 0, column=1,padx = 5, pady=5 )
+
+        appYearLabel =Label(projectFrame, text="Applicant Year",width = 20)
+        appYearLabel.grid(row = 0, column=2,padx = 5, pady=5 )
+
+        statusLabel =Label(projectFrame, text="Status",width = 20)
+        statusLabel.grid(row = 0, column=3,padx = 5, pady=5 )
+        
+        #creates frame for Back Accept Reject Button
+        buttonFrame = Frame(self.viewAppsWin)
+        buttonFrame.grid(row = 1, column = 0, columnspan = 6)
+
+        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Choose_functionality)
+        backButton.grid(row = 0,column = 0 ,  sticky = E)
+        acceptButton = Button(buttonFrame, text = "Accept",width = 15)#, command =self.acceptApplicant)
+        acceptButton.grid(row = 0,column = 3,  sticky = E)
+        rejectButton = Button(buttonFrame, text = "Reject",width = 15)#, command =self.rejectApplicant)
+        rejectButton.grid(row = 0,column = 4,  sticky = E)
+
+        #We have to import all Project/Applicant names/year / Status from Database
+        #Create function for radiobuttons that will only be assgned to the Project that have status: Pending
 
     def Popular_proj(self):
         #called by
@@ -206,8 +244,72 @@ class CS4400:
         print("admin add project")
         
     def Add_course(self):
-        #called by
-        print("admin add course")
+        #called by Button "add course" in the choose functionality function
+
+        #self.chooseFunWin.withdraw()
+
+        #creates Add Course window
+        self.addCourseWin = Toplevel()
+        self.addCourseWin.title("Add a Course")
+
+        #frame to put the Course#/Course Name/Instructor/Designation/Ctaegory/Est Students in 
+        courseInfoFrame = Frame(self.addCourseWin)
+        courseInfoFrame.grid(row = 0, column = 0, columnspan = 6)
+
+        #LABELS
+        courseNumLab = Label(courseInfoFrame, text="Course Number:")
+        courseNumLab.grid(row =0, column = 0) 
+
+        courseNameLab = Label(courseInfoFrame, text="Course Name:")
+        courseNameLab.grid(row =1, column = 0)
+
+        instructorLab = Label(courseInfoFrame, text="Instructor:")
+        instructorLab.grid(row =2, column = 0)
+
+        designationLab = Label(courseInfoFrame, text="Designation:")
+        designationLab.grid(row =3, column = 0)
+
+        categoryLab = Label(courseInfoFrame, text="Category:")
+        categoryLab.grid(row =4, column = 0)
+
+        estimatedNumStudentsLab = Label(courseInfoFrame, text="Estimated # of students:")
+        estimatedNumStudentsLab.grid(row =5, column = 0) 
+        
+
+        #Entries for labels
+
+        self.newCourseNum = StringVar()
+        courseNumEnt =Entry(courseInfoFrame, width =30, textvariable = self.newCourseNum)
+        courseNumEnt.grid(row=0, column =1)
+
+        self.newCourseName = StringVar()
+        courseNameEnt =Entry(courseInfoFrame, width =30, textvariable = self.newCourseName)
+        courseNameEnt.grid(row=1, column =1)
+
+        self.newInstructor = StringVar()
+        newInstructorEnt =Entry(courseInfoFrame, width =30, textvariable = self.newInstructor)
+        newInstructorEnt.grid(row=2, column =1)
+
+        self.estNumStudents = StringVar()
+        estNumStudentsEnt =Entry(courseInfoFrame, width =30, textvariable = self.estNumStudents)
+        estNumStudentsEnt.grid(row=5, column =1)
+
+        self.addCourseDes=StringVar()
+        self.addCourseDes.set("Please Select")
+        #USE SQL to call list of Designation names called self.deslist
+        self.deslist=["Add des1 here"," Add des2 here"]
+        self.addCourseDesdrop=OptionMenu(courseInfoFrame,self.MainPageDes,*self.deslist)
+        self.addCourseDesdrop.grid(row=3,column=1)
+
+        #Put Buttons in Frame
+        buttonFrame = Frame(self.addCourseWin)
+        buttonFrame.grid(row = 1, column = 0, columnspan = 6)
+
+        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Choose_functionality)
+        backButton.grid(row = 0,column = 0 ,  sticky = E)
+        
+        submitButton = Button(buttonFrame, text = "Accept",width = 15)#, command =self.submitNewCourse)
+        submitButton.grid(row = 0,column = 1,  sticky = E)
     
 
 win = Tk()
