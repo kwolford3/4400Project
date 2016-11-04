@@ -1,5 +1,5 @@
 from tkinter import *
-import pymysql
+#import pymysql
 import os
 from re import findall
 
@@ -24,7 +24,7 @@ class CS4400:
         self.regisBut.grid(row=2,column=1)
 
     def Login(self):
-        #called by _init_ and register
+        #called by _init_
         username = self.user.get()
         password =self.passw.get()
         print("Logged in")
@@ -34,8 +34,9 @@ class CS4400:
     def Register(self):
         #called by _init_
         print("Registered")
-        #Creates registration window
-        self.registerWin = win
+        self.loginWin.withdraw()
+        #creates registration window
+        self.registerWin = Toplevel()
         self.registerWin.title("Register")
         #create username label
         userLab= Label(self.registerWin,text="Username:")
@@ -67,8 +68,18 @@ class CS4400:
         confEnt.grid(row=3, column=1)
         #Creates a create button
         #Left as redirecting to login page. Can change if needed.
-        self.createBut =Button(self.registerWin, text="Create", command = self.Login)
+        self.createBut =Button(self.registerWin, text="Create", command = self.RegisterCheck)
         self.createBut.grid(row=4,column=0)
+        print("testing")
+        self.registerWin.deiconify()
+
+    def RegisterCheck(self):
+        print("Register check")
+        username = self.user.get()
+        userEmail = self.email.get()
+        password =self.passw.get()
+        confirmPass = self.conf
+        print(username, userEmail, password, confirmPass)
         
     def Main_page(self):
         #called by ME Page
@@ -77,6 +88,7 @@ class CS4400:
     def Me_page(self):
         #called by
         #Creates ME window
+        #destroy previous window
         self.meWin = win
         self.meWin.title("ME")
         self.profBut = Button(self.meWin, text = "Edit Profile", command = self.Edit_profile)
@@ -85,6 +97,7 @@ class CS4400:
         self.applBut.grid(row=1, column=0)
         self.backBut = Button(self.meWin, text = "Back", command = self.Main_page)
         self.backBut.grid(row=2, column=0)
+        self.meWin.deiconify()
 
     def Edit_profile(self):
         #called by Me Page
