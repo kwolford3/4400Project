@@ -37,8 +37,9 @@ class CS4400:
         print("Logged in")
         print(username)
         print(password)
+        #self.loginWin.destroy() # will  need to do once a login is accepted
         self.Main_page() #will need to put under else once sql is added
-       
+        
 
     def Register(self):
         #called by _init_
@@ -80,7 +81,7 @@ class CS4400:
         self.createBut =Button(self.registerWin, text="Create", command = self.RegisterCheck)
         self.createBut.grid(row=4,column=0)
         print("testing")
-        self.registerWin.deiconify()
+        #self.registerWin.deiconify() Moved to function below, only want to destroy windoe if register is good
 
     def RegisterCheck(self):
         print("Register check")
@@ -90,12 +91,13 @@ class CS4400:
         confirmPass = self.conf
         print(username, userEmail, password, confirmPass)
         print("calling main page")
+        self.registerWin.destroy()
         self.Main_page() #ONLY RUN IF A SUCCESFUL REGISTER
         
     def Main_page(self):
         #called by ME Page
         #also called by a succesfull login page
-       
+        self.loginWin.withdraw()
         #self.registerWin.withdraw()
         self.Main_pageWin = Toplevel()
         self.Main_pageWin.title("Main Page")
@@ -108,9 +110,9 @@ class CS4400:
         MainPageLab2 = Label(self.Main_pageWin, text="Category:")
         MainPageLab2.grid(row=0,column=2)
         self.MainPageCat=StringVar()
-        self.MainPageCat.set("Pick a Category")
+        self.MainPageCat.set("Please Select")
         #USE SQL to call list of category names called self.catlist
-        self.catlist=["Add cat1 here"," Add Cat 2 here"]
+        self.catlist=["Add cat1 here"," Add Cat 2 here", "Cat 3", "Cat 4", "Cat 5"]
         self.MainPagedrop=OptionMenu(self.Main_pageWin,self.MainPageCat,*self.catlist)
         self.MainPagedrop.grid(row=0,column=3)
         self.MainPageRow = 0
@@ -134,8 +136,8 @@ class CS4400:
         self.MainPageMaj.set("Please Select")
         #USE SQL to call list of Designation names called self.deslist
         self.majlist=["Add maj1 here"," Add maj2 here"]
-        self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageMaj,*self.majlist)
-        self.MainPageDesdrop.grid(row=2,column=1)
+        self.MainPageMajdrop=OptionMenu(self.Main_pageWin,self.MainPageMaj,*self.majlist)
+        self.MainPageMajdrop.grid(row=2,column=1)
 
         MainPageLabYear = Label(self.Main_pageWin,text="Year:")
         MainPageLabYear.grid(row=3,column=0)
@@ -144,17 +146,133 @@ class CS4400:
         self.MainPageYear.set("Please Select")
         #USE SQL to call list of Designation names called self.deslist
         self.yearlist=["Freshman","Sophmore","Junior","Senior"]
-        self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageYear,*self.yearlist)
-        self.MainPageDesdrop.grid(row=3,column=1)
+        self.MainPageYeardrop=OptionMenu(self.Main_pageWin,self.MainPageYear,*self.yearlist)
+        self.MainPageYeardrop.grid(row=3,column=1)
+
+        self.CatTempList=[]
+
+        #Radio BUttons
+        self.MainPageRB=StringVar()
+        self.ProjButtonMP= Radiobutton(self.Main_pageWin, text="Project", value="Project", variable=self.MainPageRB)
+        self.ProjButtonMP.grid(row=3,column=2)
+        self.CourseButtonMP= Radiobutton(self.Main_pageWin, text="Course", value="Course", variable=self.MainPageRB)
+        self.CourseButtonMP.grid(row=3,column=3)
+        self.BothButtonMP= Radiobutton(self.Main_pageWin, text="Both", value="Both", variable=self.MainPageRB)
+        self.BothButtonMP.grid(row=3,column=4)
+
+        self.FilterBut =Button(self.Main_pageWin, text="Apply Filter", command = self.Apply_Filter)
+        self.FilterBut.grid(row=4,column=3)
+        self.ResetBut =Button(self.Main_pageWin, text="Reset Filter", command = self.Reset_Filter)
+        self.ResetBut.grid(row=4,column=4)
+
+
+    def Apply_Filter(self):
+        print("apply filter")
+        
+    def Reset_Filter(self):
+        print("Reset Filter")
+        self.Main_pageWin.destroy()
+        self.Main_page()
         
     def Add_Cat_MainPage(self):
-        #print("adding a cat")
+        if self.MainPageCat.get() == "Please Select" :
+            return messagebox.showerror("OOps!","Please Pick A category before trying to add a new one")
+        
         self.MainPageRow = self.MainPageRow +1
+
+        
+        if self.MainPageRow == 1:
+            self.CatTempList.append(self.MainPageCat.get())
+          
+        
+        if self.MainPageRow > 1: 
+            if self.MainPageCat1.get() == "Please Select":
+                self.MainPageRow = self.MainPageRow - 1
+                return messagebox.showerror("OOps!","Please Pick A category before trying to add a new one")
+            
+            if self.MainPageCat1.get() not in self.CatTempList:
+                self.CatTempList.append(self.MainPageCat1.get())
+
+            else:
+                self.MainPageRow = self.MainPageRow - 1
+                return messagebox.showerror("OOps!","Please Do not Repeat Categories")
+        
+        if self.MainPageRow >= len(self.catlist): #-1:
+          self.AddCatBut.config(state="disabled")
+          return messagebox.showerror("OOps!","You have reached the maximum amount of Categories that can be added")
+            
+        
+        self.Main_pageWin.destroy()
+ 
+        
+        self.Main_pageWin = Toplevel()
+        self.Main_pageWin.title("Main Page")
+        MainPageLab1New = Label(self.Main_pageWin, text="Title:")
+        MainPageLab1New.grid(row=0,column=0)
+
+      
+        self.MPEntry.set(self.MPEntry.get())
+        MainPageEnt=Entry(self.Main_pageWin, width=30, textvariable=self.MPEntry)
+        MainPageEnt.grid(row=0, column=1)
+        MainPageLab2 = Label(self.Main_pageWin, text="Category:")
+        MainPageLab2.grid(row=0,column=2)
+        
+      
+        self.MainPageCat.set(self.MainPageCat.get())
         self.MainPagedrop=OptionMenu(self.Main_pageWin,self.MainPageCat,*self.catlist)
-        self.MainPagedrop.grid(row=self.MainPageRow,column=3)
+        self.MainPagedrop.grid(row=0,column=3)
+        self.MainPagedrop.config(state="disabled")
+ 
+     
+        MainPageLabDes = Label(self.Main_pageWin,text="Designation:")
+        MainPageLabDes.grid(row=1,column=0)
+        self.MainPageYear.set(self.MainPageYear.get())
+        self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageDes,*self.deslist)
+        self.MainPageDesdrop.grid(row=1,column=1)
+
+        MainPageLabMaj = Label(self.Main_pageWin,text="Major:")
+        MainPageLabMaj.grid(row=2,column=0)
+        self.MainPageMaj.set(self.MainPageMaj.get())
+        self.MainPageMajdrop=OptionMenu(self.Main_pageWin,self.MainPageMaj,*self.majlist)
+        self.MainPageMajdrop.grid(row=2,column=1)
+
+        MainPageLabYear = Label(self.Main_pageWin,text="Year:")
+        MainPageLabYear.grid(row=3,column=0)
+        self.MainPageYear.set(self.MainPageYear.get())
+        self.MainPageYeardrop=OptionMenu(self.Main_pageWin,self.MainPageYear,*self.yearlist)
+        self.MainPageYeardrop.grid(row=3,column=1)
+ 
+        for item in range(1,self.MainPageRow+1):
+            
+            if item == self.MainPageRow:
+                
+                self.MainPageCat1=StringVar()
+                self.MainPageCat1.set("Please Select")
+                self.MainPagedrop=OptionMenu(self.Main_pageWin,self.MainPageCat1,*self.catlist)
+                self.MainPagedrop.grid(row=item,column=3)
+            else:
+                self.MainPageCat1=StringVar()
+                self.MainPageCat1.set(self.CatTempList[item])
+                self.MainPagedrop=OptionMenu(self.Main_pageWin,self.MainPageCat1,*self.catlist)
+                self.MainPagedrop.grid(row=item,column=3)
+                self.MainPagedrop.config(state="disabled")
+        
         self.AddCatBut =Button(self.Main_pageWin, text="Add a Category", command = self.Add_Cat_MainPage)
         self.AddCatBut.grid(row=self.MainPageRow,column=4)
-        
+
+        self.MainPageRB.set(self.MainPageRB.get())
+        self.ProjButtonMP= Radiobutton(self.Main_pageWin, text="Project", value="Project", variable=self.MainPageRB)
+        self.ProjButtonMP.grid(row=self.MainPageRow+1,column=2)
+        self.CourseButtonMP= Radiobutton(self.Main_pageWin, text="Course", value="Course", variable=self.MainPageRB)
+        self.CourseButtonMP.grid(row=self.MainPageRow+1,column=3)
+        self.BothButtonMP= Radiobutton(self.Main_pageWin, text="Both", value="Both", variable=self.MainPageRB)
+        self.BothButtonMP.grid(row=self.MainPageRow+1,column=4)
+
+        self.FilterBut =Button(self.Main_pageWin, text="Apply Filter", command = self.Apply_Filter)
+        self.FilterBut.grid(row=self.MainPageRow+2,column=3)
+        self.ResetBut =Button(self.Main_pageWin, text="Reset Filter", command = self.Reset_Filter)
+        self.ResetBut.grid(row=self.MainPageRow+2,column=4)
+
     def Me_page(self):
         #called by
         #Creates ME window
