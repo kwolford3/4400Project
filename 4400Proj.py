@@ -30,15 +30,83 @@ class CS4400:
         # Need SQL Code to check if login is succesful
         # need SQL COde to check flag type of user 
         # if self.flag="Admin":
-            #self.Choose_functionality()
+            #self.ChooseFunc()
         #else:
         # self.flag="Student"
         
         print("Logged in")
         print(username)
         print(password)
+        if username == "tylerhall":  #this is temporary; would normally be a
+                                        #admin username (will have to get from SQL)
+            self.ChooseFunc()
+        else:
+            print("Invalid username") #this will need to become an error window
         #self.loginWin.destroy() # will  need to do once a login is accepted
+            #this is done inside ChooseFunc function for admin users
         self.Main_page() #will need to put under else once sql is added
+            #this only needs to happen if a student logs in
+
+    def ChooseFunc(self):
+        #this function is called by Login if the user logs in as a Admin
+
+        #creates Choose Functionality window and hides Login window
+        self.chooseFuncWin = Toplevel()
+        self.loginWin.withdraw()
+        self.chooseFuncWin.title("Choose Functionality")
+        #Creating Choose Functionality labels and buttons
+        chooseLab = Label(self.chooseFuncWin, text="Choose Functionality")
+        chooseLab.grid(row=0,column=0)
+        self.viewAppBut = Button(self.chooseFuncWin, text="View Applications",command=self.View_apps)
+        self.viewAppBut.grid(row=1,column=0)
+        self.viewPopProjBut = Button(self.chooseFuncWin, text="View Popular Project Report",command=self.Popular_Project)
+        self.viewPopProjBut.grid(row=2,column=0)
+        self.viewAppRepBut = Button(self.chooseFuncWin, text="View Application Report",command=self.App_report)
+        self.viewAppRepBut.grid(row=3,column=0)
+        self.addProjBut = Button(self.chooseFuncWin, text="Add a Project", command=self.Add_proj)
+        self.addProjBut.grid(row=4,column=0)
+        self.addCourseBut = Button(self.chooseFuncWin, text="Add a Course", command=self.Add_course)
+        self.addCourseBut.grid(row=5,column=0)
+        self.logOutBut = Button(self.chooseFuncWin, text="Log Out")#need to add a command here
+        self.logOutBut.grid(row=6,column=0)
+
+
+    def Popular_Project(self):
+        #called by ChooseFunc (clicking "View Popular Proj" button on Choose Func window)
+
+        #creates Popular Project Report window and hides Choose Functionality window
+        self.popProjWin = Toplevel()
+        self.chooseFuncWin.withdraw()
+        #creates objects within Pop Proj window
+        self.popProjWin.title("Popular Project Report")
+        popProjLab = Label(self.popProjWin, text = "Popular Project")
+        popProjLab.grid(row=0,column=0)
+        #this will need to change, placeholder until I figure out how to insert a table
+        self.Table = Label(self.popProjWin, text = "**Table will go here**")
+        self.Table.grid(row=1,column=0)
+        self.backBut = Button(self.popProjWin, text = "Back",command=self.Back_Popular_Project)
+        self.backBut.grid(row=2,column=0)
+
+
+    def Back_Popular_Project(self):
+        #called by Popular_Project (by clicking back button to go back to Choose Func window)
+        
+        self.ChooseFunc()
+        self.popProjWin.withdraw()
+
+    def Back_View_apps(self):
+        #called by View_apps (by clicking back button to go back to Choose Func window)
+        
+        self.ChooseFunc()
+        self.viewAppsWin.withdraw()
+
+    def Back_Add_course(self):
+        #called by Add_course (by clicking back button to go back to Choose Func window)
+
+        self.ChooseFunc()
+        self.addCourseWin.withdraw()
+        
+        
         
 
     def Register(self):
@@ -303,11 +371,6 @@ class CS4400:
         #called by
         print ("view course page")
 
-    def Choose_functionality(self):
-        #called by
-        self.chooseFunWin = Toplevel()
-        self.chooseFunWin.title("Choose Functionality")
-        print ("admin choose functionality page")
 
     def View_apps(self):
         #called by the "View applications button" in the Choose Functionality Pgae
@@ -316,6 +379,7 @@ class CS4400:
 
         #creates View Apps window
         self.viewAppsWin = Toplevel()
+        self.chooseFuncWin.withdraw()
         self.viewAppsWin.title("Application")
 
         #frame to put the Apllications in
@@ -339,7 +403,7 @@ class CS4400:
         buttonFrame = Frame(self.viewAppsWin)
         buttonFrame.grid(row = 1, column = 0, columnspan = 6)
 
-        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Choose_functionality)
+        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Back_View_apps)
         backButton.grid(row = 0,column = 0 ,  sticky = E)
         acceptButton = Button(buttonFrame, text = "Accept",width = 15)#, command =self.acceptApplicant)
         acceptButton.grid(row = 0,column = 3,  sticky = E)
@@ -349,9 +413,6 @@ class CS4400:
         #We have to import all Project/Applicant names/year / Status from Database
         #Create function for radiobuttons that will only be assgned to the Project that have status: Pending
 
-    def Popular_proj(self):
-        #called by
-        print ("admin popular projects page")
 
     def App_report(self):
         #called by
@@ -359,6 +420,10 @@ class CS4400:
 
     def Add_proj(self):
         #called by
+
+        self.addProjectWin = Toplevel()
+        self.chooseFuncWin.withdraw()
+        self.addProjectWin.title("Add a Project")
         print("admin add project")
         
     def Add_course(self):
@@ -366,8 +431,9 @@ class CS4400:
 
         #self.chooseFunWin.withdraw()
 
-        #creates Add Course window
+        #creates Add Course window and hides Choose Func window
         self.addCourseWin = Toplevel()
+        self.chooseFuncWin.withdraw()
         self.addCourseWin.title("Add a Course")
 
         #frame to put the Course#/Course Name/Instructor/Designation/Ctaegory/Est Students in 
@@ -423,7 +489,7 @@ class CS4400:
         buttonFrame = Frame(self.addCourseWin)
         buttonFrame.grid(row = 1, column = 0, columnspan = 6)
 
-        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Choose_functionality)
+        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Back_Add_course)
         backButton.grid(row = 0,column = 0 ,  sticky = E)
         
         submitButton = Button(buttonFrame, text = "Accept",width = 15)#, command =self.submitNewCourse)
