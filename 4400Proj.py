@@ -385,7 +385,9 @@ class CS4400:
         #called by
         #Creates ME window
         #destroy previous window
-        self.meWin = win
+        self.Main_pageWin.withdraw()
+        #print("me page running")
+        self.meWin = Toplevel()
         self.meWin.title("ME")
         self.profBut = Button(self.meWin, text = "Edit Profile", command = self.Edit_profile)
         self.profBut.grid(row=0, column=0)
