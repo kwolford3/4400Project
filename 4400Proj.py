@@ -449,8 +449,47 @@ class CS4400:
         print ("view project page")
 
     def View_course(self):
-        #called by
-        print ("view course page")
+        #called by some function that has not been created yet? has no call right now
+        #needs to be withdraw by previous pages
+       # print ("view course page")
+        self.ViewCourseWin=Toplevel()
+        self.ViewCourseWin.title("View Course")
+        #will be called from selections based on sql and main page
+        self.courseListinfo=("Example Course Name","Example Instructor","Example Designation", "Example Cat", "##")
+        
+        VCLab1 =Label(self.ViewCourseWin, text="Course Name:",bg="Light Blue")
+        VCLab1.grid(row = 0, column=0,padx = 5, pady=5 )
+        VCName =Label(self.ViewCourseWin, text=self.courseListinfo[0])
+        VCName.grid(row = 0, column=1,padx = 5, pady=5)
+        
+        VCLab1 =Label(self.ViewCourseWin, text="Instructor:",bg="Light Blue")
+        VCLab1.grid(row = 1, column=0,padx = 5, pady=5 )
+        VCInst =Label(self.ViewCourseWin, text=self.courseListinfo[1])
+        VCInst.grid(row = 1, column=1,padx = 5, pady=5 )
+        
+        VCLab2 =Label(self.ViewCourseWin, text="Designation:",bg="Light Blue")
+        VCLab2.grid(row = 2, column=0,padx = 5, pady=5 )
+        VCDes =Label(self.ViewCourseWin, text=self.courseListinfo[2])
+        VCDes.grid(row = 2, column=1,padx = 5, pady=5 )
+
+        VCLab3 =Label(self.ViewCourseWin, text="Category",bg="Light Blue")
+        VCLab3.grid(row = 3, column=0,padx = 5, pady=5 )
+        VCCat =Label(self.ViewCourseWin, text=self.courseListinfo[3])
+        VCCat.grid(row = 3, column=1,padx = 5, pady=5 )
+
+        VCLab4 =Label(self.ViewCourseWin, text="Estimatied Number of Students",bg="Light Blue")
+        VCLab4.grid(row = 4, column=0,padx = 5, pady=5 )
+        VCNum =Label(self.ViewCourseWin, text=self.courseListinfo[4])
+        VCNum.grid(row = 4, column=1,padx = 5, pady=5 )
+
+        VCBackBut=Button(self.ViewCourseWin, text="Back", command=self.VCBack)
+        VCBackBut.grid(row=5, column=0)
+
+    def VCBack(self):
+        self.ViewCourseWin.withdraw()
+        self.Main_page()
+        
+        
 
 
     def View_apps(self):
