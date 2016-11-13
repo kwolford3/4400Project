@@ -162,7 +162,7 @@ class CS4400:
         self.registerWin.destroy()
         self.Main_page() #ONLY RUN IF A SUCCESFUL REGISTER
         
-      def Main_page(self):
+    def Main_page(self):
         #called by ME Page
         #also called by a succesfull login page
         self.loginWin.withdraw()
@@ -264,7 +264,7 @@ class CS4400:
         self.Main_pageWin.destroy()
         self.Main_page()
         
-        def Add_Cat_MainPage(self):
+    def Add_Cat_MainPage(self):
         if self.MainPageCat.get() == "Please Select" :
             return messagebox.showerror("OOps!","Please Pick A category before trying to add a new one")
         
@@ -400,7 +400,7 @@ class CS4400:
         self.profBut.grid(row=0, column=0)
         self.applBut = Button(self.meWin, text = "My Applications", command = self.My_app)
         self.applBut.grid(row=1, column=0)
-        self.backBut = Button(self.meWin, text = "Back", command = self.Main_page)
+        self.backBut = Button(self.meWin, text = "Back", command = self.Main_page)# need to make a seperate function for this winddow so the me win page will close itself
         self.backBut.grid(row=2, column=0)
         self.meWin.deiconify()
 
@@ -410,7 +410,39 @@ class CS4400:
 
     def My_app(self):
         #called my Me Page
-        print ("my apps")
+        #print ("my apps")
+        self.meWin.withdraw()
+        self.MyAppsWin = Toplevel()
+        self.MyAppsWin.title("My Applications")
+        f=Frame(self.MyAppsWin, bg="black")
+        f.grid(row=0,column=0)
+        MyALab1 =Label(f, text="Date",width = 15, bg="Light Blue")
+        MyALab1.grid(row = 0, column=0,padx = 5, pady=5 )
+        MyALab2 =Label(f, text="Project Name",width = 50, bg= "Light Blue")
+        MyALab2.grid(row = 0, column=1,padx = 5, pady=5 )
+        MyALab3 =Label(f, text="Status",width = 20, bg= "Light Blue")
+        MyALab3.grid(row = 0, column=2,padx = 5, pady=5)
+        self.MyAppList=[("10/11/12","Project A","Pending"),("1/11/16","Project 9","Accepted"),("12/12/95","Project 9","Rejected")]
+        MyAppCounter= 1
+        for tup in self.MyAppList:
+            date= tup[0]
+            name=tup[1]
+            status=tup[2]
+            MyALab1 =Label(f, text=date,width = 15)
+            MyALab1.grid(row = MyAppCounter, column=0,padx = 5, pady=5 )
+            MyALab2 =Label(f, text=name,width = 50)
+            MyALab2.grid(row = MyAppCounter, column=1,padx = 5, pady=5 )
+            MyALab3 =Label(f, text=status,width = 20)
+            MyALab3.grid(row = MyAppCounter, column=2,padx = 5, pady=5)
+            MyAppCounter= MyAppCounter+1
+            
+        MyAppBackBut=Button(self.MyAppsWin, text="Back", command=self.MyAppBack)
+        MyAppBackBut.grid(row=1,column= 0)
+
+    def MyAppBack(self):
+        self.MyAppsWin.withdraw()
+        self.Me_page()
+        
 
     def View_proj(self):
         #called by
