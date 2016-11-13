@@ -232,6 +232,26 @@ class CS4400:
         self.FilterBut.grid(row=4,column=3)
         self.ResetBut =Button(self.Main_pageWin, text="Reset Filter", command = self.Reset_Filter)
         self.ResetBut.grid(row=4,column=4)
+        
+#Course Project List# may need to add scroll bar??
+
+        self.CPframe=Frame(self.Main_pageWin,bd= 3,bg="black")
+        self.CPframe.grid(row=5, column=0,columnspan= 5)
+        MPCPlab1= Label(self.CPframe, text ="Name", width=70,bg="Light Blue")
+        MPCPlab1.grid(row=0,column=0,sticky=W,padx=3,pady=1)
+        MPCPlab2= Label(self.CPframe, text ="Type",width=20,bg="Light Blue")
+        MPCPlab2.grid(row=0,column=1,sticky=W,pady=1)
+        #pull al list of all courses anf projects here will need SQL
+        CPframeCounter=1
+        self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Prject Q","Project")]
+        for tup in self.CPlist:
+            Name=tup[0]
+            typ=tup[1]
+            lab=Label(self.CPframe, text =str(Name), width=70)
+            lab.grid(row=CPframeCounter,column=0,sticky=W,padx=3,pady=1)
+            lab=Label(self.CPframe, text =str(typ), width=20)
+            lab.grid(row=CPframeCounter,column=1,sticky=W,pady=1)
+            CPframeCounter=CPframeCounter+1
 
 
     def Apply_Filter(self):
@@ -340,6 +360,26 @@ class CS4400:
         self.FilterBut.grid(row=self.MainPageRow+2,column=3)
         self.ResetBut =Button(self.Main_pageWin, text="Reset Filter", command = self.Reset_Filter)
         self.ResetBut.grid(row=self.MainPageRow+2,column=4)
+        
+         #Course Project List
+        self.CPframe=Frame(self.Main_pageWin,bd= 3,bg="black")
+        self.CPframe.grid(row=self.MainPageRow+3, column=0,columnspan= 5)
+        MPCPlab1= Label(self.CPframe, text ="Name", width=70,bg="Light Blue")
+        MPCPlab1.grid(row=0,column=0,sticky=W,padx=3,pady=1)
+        MPCPlab2= Label(self.CPframe, text ="Type",width=20,bg="Light Blue")
+        MPCPlab2.grid(row=0,column=1,sticky=W,pady=1)
+        #pull al list of all courses anf projects here will need SQL
+        CPframeCounter=1
+        # list should be defined as all or as apply filter?
+ #       self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Prject Q","Project")]
+        for tup in self.CPlist:
+            Name=tup[0]
+            typ=tup[1]
+            lab=Label(self.CPframe, text =str(Name), width=70)
+            lab.grid(row=CPframeCounter,column=0,sticky=W,padx=3,pady=1)
+            lab=Label(self.CPframe, text =str(typ), width=20)
+            lab.grid(row=CPframeCounter,column=1,sticky=W,pady=1)
+            CPframeCounter=CPframeCounter+1
 
     def Me_page(self):
         #called by
