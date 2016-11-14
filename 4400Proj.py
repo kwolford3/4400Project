@@ -403,13 +403,50 @@ class CS4400:
         self.profBut.grid(row=0, column=0)
         self.applBut = Button(self.meWin, text = "My Applications", command = self.My_app)
         self.applBut.grid(row=1, column=0)
-        self.backBut = Button(self.meWin, text = "Back", command = self.Main_page)# need to make a seperate function for this winddow so the me win page will close itself
+        self.backBut = Button(self.meWin, text = "Back", command = self.MeBack)
         self.backBut.grid(row=2, column=0)
         self.meWin.deiconify()
 
+    def MeBack(self):
+        self.meWin.withdraw()
+        self.Main_page()
+
     def Edit_profile(self):
         #called by Me Page
-        print ("edit profile")
+        self.meWin.withdraw()
+        self.editWin = Toplevel()
+        self.editWin.title("Edit Profile")
+        majorLab= Label(self.editWin,text="Major:")
+        majorLab.grid(row=0,column=0)
+        yearLab= Label(self.editWin,text="Year:")
+        yearLab.grid(row=1,column=0)
+        deptLab= Label(self.editWin,text="Department:")
+        deptLab.grid(row=2,column=0)
+
+        self.EditPageMaj=StringVar()
+        self.EditPageMaj.set("Please Select")
+        #USE SQL to call list of major names called self.majlist
+        self.majlist=["Add maj1 here"," Add maj2 here"]
+        self.EditPageMajdrop=OptionMenu(self.editWin,self.EditPageMaj,*self.majlist)
+        self.EditPageMajdrop.grid(row=0,column=1)
+
+        self.EditPageYr=StringVar()
+        self.EditPageYr.set("Please Select")
+        self.yrlist=["Freshman","Sophomore","Junior","Senior"]
+        self.EditPageYrdrop=OptionMenu(self.editWin,self.EditPageYr,*self.yrlist)
+        self.EditPageYrdrop.grid(row=1,column=1)
+
+        #USE SQL to fill in the department based on the major
+
+        #Back button and submit data
+        self.backBut = Button(self.editWin, text = "Back", command = self.EditBack)
+        self.backBut.grid(row=3, column=0)
+        self.editWin.deiconify()
+        
+    def EditBack(self):
+        self.editWin.withdraw()
+        self.Me_page()
+        
 
     def My_app(self):
         #called my Me Page
@@ -577,11 +614,86 @@ class CS4400:
 
     def Add_proj(self):
         #called by
-
-        self.addProjectWin = Toplevel()
         self.chooseFuncWin.withdraw()
+        self.addProjectWin = Toplevel() 
         self.addProjectWin.title("Add a Project")
         print("admin add project")
+        projInfoFrame = Frame(self.addProjectWin)
+        projInfoFrame.grid(row = 0, column = 0, columnspan = 6)
+        #LABELS
+        projNameLab = Label(projInfoFrame, text="Project Name:")
+        projNameLab.grid(row =0, column = 0)
+        advisorLab = Label(projInfoFrame, text="Advisor:")
+        advisorLab.grid(row=1, column=0)
+        advisorEmLab = Label(projInfoFrame, text="Advisor Email:")
+        advisorEmLab.grid(row=2, column=0)
+        descriptLab = Label(projInfoFrame, text="Description:")
+        descriptLab.grid(row=3, column=0)
+        categoryLab = Label(projInfoFrame, text="Category:")
+        categoryLab.grid(row=4, column=0)
+        desigLab = Label(projInfoFrame, text="Designation:")
+        desigLab.grid(row=5, column=0)
+        estNumLab = Label(projInfoFrame, text="Estimated Number of Students:")
+        estNumLab.grid(row=6, column=0)
+        majorLab = Label(projInfoFrame, text="Major Requirement:")
+        majorLab.grid(row=7, column=0)
+        yearLab = Label(projInfoFrame, text="Year Requirement:")
+        yearLab.grid(row=8, column=0)
+        deptLab = Label(projInfoFrame, text="Department Requirement:")
+        deptLab.grid(row=9, column=0)
+
+        #ENTRIES
+        self.projName = StringVar()
+        projNameEnt = Entry(projInfoFrame, width =30, textvariable = self.projName)
+        projNameEnt.grid(row=0, column =1)
+        self.advisor = StringVar()
+        advisorEnt = Entry(projInfoFrame, width =30, textvariable = self.advisor)
+        advisorEnt.grid(row=1, column=1)
+        self.advisorEm = StringVar()
+        advisorEmEnt = Entry(projInfoFrame, width =30, textvariable = self.advisorEm)
+        advisorEmEnt.grid(row=2, column=1)
+        self.descript = StringVar()
+        descriptEnt = Entry(projInfoFrame, width =30, textvariable = self.descript)
+        descriptEnt.grid(row=3, column=1)
+        #CATEGORY
+        self.ProjPageCat=StringVar()
+        self.ProjPageCat.set("Please Select")
+        #USE SQL to call list of cat names called self.catlist
+        self.catlist=["Add cat1 here"," Add cat2 here", "No Requirement"]
+        self.ProjPageCatdrop=OptionMenu(projInfoFrame,self.ProjPageCat,*self.catlist)
+        self.ProjPageCatdrop.grid(row=4,column=1)
+        #DESIGNATION
+        self.ProjPageDes=StringVar()
+        self.ProjPageDes.set("Please Select")
+        #USE SQL to call list of des names called self.deslist
+        self.deslist=["Add des1 here"," Add des2 here", "No Requirement"]
+        self.ProjPageDesdrop=OptionMenu(projInfoFrame,self.ProjPageDes,*self.deslist)
+        self.ProjPageDesdrop.grid(row=4,column=1)
+        
+        estNum = StringVar()
+        estNumEnt = Entry(projInfoFrame, width =30, textvariable = self.estNum)
+        estNumEnt.grid(row=6, column=1)
+        #MAJOR
+        self.ProjPageMaj=StringVar()
+        self.ProjPageMaj.set("Please Select")
+        #USE SQL to call list of major names called self.majlist
+        self.majlist=["Add maj1 here"," Add maj2 here", "No Requirement"]
+        self.ProjPageMajdrop=OptionMenu(projInfoFrame,self.ProjPageMaj,*self.majlist)
+        self.ProjPageMajdrop.grid(row=7,column=1)
+        #YEAR
+        self.ProjPageYr=StringVar()
+        self.ProjPageYr.set("Please Select")
+        self.yrlist=["Freshman","Sophomore","Junior","Senior", "No Requirement"]
+        self.ProjPageYrdrop=OptionMenu(projInfoFrame,self.ProjPageYr,*self.yrlist)
+        self.ProjPageYrdrop.grid(row=8,column=1)
+        #DEPARTMENT
+        self.ProjPageDept=StringVar()
+        self.ProjPageDept.set("Please Select")
+        #USE SQL to call list of dept names called self.deptlist
+        self.deptlist=["Add dept1 here"," Add dept2 here", "No Requirement"]
+        self.ProjPageDeptdrop=OptionMenu(projInfoFrame,self.ProjPageDept,*self.deptlist)
+        self.ProjPageDeptdrop.grid(row=7,column=1)
+
         
     def Add_course(self):
         #called by Button "add course" in the choose functionality function
