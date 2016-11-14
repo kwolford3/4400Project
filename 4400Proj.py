@@ -543,21 +543,48 @@ class CS4400:
         self.viewAppsWin.title("Application")
 
         #frame to put the Apllications in
-        projectFrame = Frame(self.viewAppsWin)
-        projectFrame.grid(row = 0, column = 0, columnspan = 6)
+        self.projectFrame = Frame(self.viewAppsWin,bd= 3,bg="black")
+        self.projectFrame.grid(row = 0, column = 0, columnspan = 6)
 
         #Labels for Project, Applicant Major/Year, Status
-        projectLabel =Label(projectFrame, text="Project",width = 20)
-        projectLabel.grid(row = 0, column=0,padx = 5, pady=5 )
+        projectLabel =Label(self.projectFrame, text="Project",width = 20,bg="Light Blue")
+        projectLabel.grid(row = 0, column=0,sticky=W,padx=3,pady=1)
 
-        appMajorLabel =Label(projectFrame, text="Applicant Major",width = 20)
-        appMajorLabel.grid(row = 0, column=1,padx = 5, pady=5 )
+        appMajorLabel =Label(self.projectFrame, text="Applicant Major",width = 20,bg="Light Blue")
+        appMajorLabel.grid(row = 0, column=1,sticky=W,padx=3,pady=1)
 
-        appYearLabel =Label(projectFrame, text="Applicant Year",width = 20)
-        appYearLabel.grid(row = 0, column=2,padx = 5, pady=5 )
+        appYearLabel =Label(self.projectFrame, text="Applicant Year",width = 20,bg="Light Blue")
+        appYearLabel.grid(row = 0, column=2,sticky=W,padx=3,pady=1)
 
-        statusLabel =Label(projectFrame, text="Status",width = 20)
-        statusLabel.grid(row = 0, column=3,padx = 5, pady=5 )
+        statusLabel =Label(self.projectFrame, text="Status",width = 20,bg="Light Blue")
+        statusLabel.grid(row = 0, column=3,sticky=W,padx=3,pady=1)
+
+        #pull al list of all Project, Applicant Major/Year, Status
+        projectframeCounter=1
+        self.projMajYearStatlist =[("Project A","CS","Freshman","Pending"),("Project B","ECE","Junior","Rejected"),("Project C","IE","Senior","Pending"),("Project F","INTA","Senior","Accepted")]
+        for tup in self.projMajYearStatlist:
+            projectName=tup[0]
+            applicantMajor=tup[1]
+            applicantYear=tup[2]
+            applicantStatus=tup[3]
+            lab=Label(self.projectFrame, text =str(projectName), width=20)
+            lab.grid(row=projectframeCounter,column=0,sticky=W,padx=3,pady=1)
+            lab=Label(self.projectFrame, text =str(applicantMajor), width=20)
+            lab.grid(row=projectframeCounter,column=1,sticky=W,padx=3,pady=1)
+            lab=Label(self.projectFrame, text =str(applicantYear), width=20)
+            lab.grid(row=projectframeCounter,column=2,sticky=W,padx=3,pady=1)
+            lab=Label(self.projectFrame, text =str(applicantStatus), width=20)
+            lab.grid(row=projectframeCounter,column=3,sticky=W,padx=3,pady=1)
+            projectframeCounter=projectframeCounter+1
+
+        #We have to import all Project/Applicant names/year / Status from Database
+        #Create function for radiobuttons that will only be assgned to the Project that have status: Pending
+
+        #Radio BUttons
+ #       self.viewApps=StringVar()
+ #       self.ProjRButton= Radiobutton(self.projectFrame, variable=self.viewApps)
+ #       self.ProjRButton.grid(row=variable,column=0)
+
         
         #creates frame for Back Accept Reject Button
         buttonFrame = Frame(self.viewAppsWin)
@@ -569,11 +596,7 @@ class CS4400:
         acceptButton.grid(row = 0,column = 3,  sticky = E)
         rejectButton = Button(buttonFrame, text = "Reject",width = 15)#, command =self.rejectApplicant)
         rejectButton.grid(row = 0,column = 4,  sticky = E)
-
-        #We have to import all Project/Applicant names/year / Status from Database
-        #Create function for radiobuttons that will only be assgned to the Project that have status: Pending
-
-
+        
     def App_report(self):
         self.applicationReportWin = Toplevel()
         self.chooseFuncWin.withdraw()
