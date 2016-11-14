@@ -44,7 +44,7 @@ class CS4400:
             print("Invalid username") #this will need to become an error window
         #self.loginWin.destroy() # will  need to do once a login is accepted
             #this is done inside ChooseFunc function for admin users
-        self.Main_page() #will need to put under else once sql is added
+            self.Main_page() #will need to put under else once sql is added
             #this only needs to happen if a student logs in
 
     def ChooseFunc(self):
@@ -668,9 +668,9 @@ class CS4400:
         #USE SQL to call list of des names called self.deslist
         self.deslist=["Add des1 here"," Add des2 here", "No Requirement"]
         self.ProjPageDesdrop=OptionMenu(projInfoFrame,self.ProjPageDes,*self.deslist)
-        self.ProjPageDesdrop.grid(row=4,column=1)
+        self.ProjPageDesdrop.grid(row=5,column=1)
         
-        estNum = StringVar()
+        self.estNum = StringVar()
         estNumEnt = Entry(projInfoFrame, width =30, textvariable = self.estNum)
         estNumEnt.grid(row=6, column=1)
         #MAJOR
@@ -692,7 +692,19 @@ class CS4400:
         #USE SQL to call list of dept names called self.deptlist
         self.deptlist=["Add dept1 here"," Add dept2 here", "No Requirement"]
         self.ProjPageDeptdrop=OptionMenu(projInfoFrame,self.ProjPageDept,*self.deptlist)
-        self.ProjPageDeptdrop.grid(row=7,column=1)
+        self.ProjPageDeptdrop.grid(row=9,column=1)
+
+
+        backButton = Button(self.addProjectWin, text = "Back",width = 15, command = self.ApBack)
+        backButton.grid(row = 10,column = 0 ,  sticky = E)
+        
+        submitButton = Button(self.addProjectWin, text = "Submit",width = 15)#, command =self.submitNewCourse)
+        submitButton.grid(row = 10,column = 1,  sticky = E)
+
+    def ApBack(self):
+        self.ChooseFunc()
+        self.addProjectWin.withdraw()
+        
 
         
     def Add_course(self):
@@ -706,64 +718,114 @@ class CS4400:
         self.addCourseWin.title("Add a Course")
 
         #frame to put the Course#/Course Name/Instructor/Designation/Ctaegory/Est Students in 
-        courseInfoFrame = Frame(self.addCourseWin)
-        courseInfoFrame.grid(row = 0, column = 0, columnspan = 6)
+        self.courseInfoFrame = Frame(self.addCourseWin)
+        self.courseInfoFrame.grid(row = 0, column = 0, columnspan = 6)
 
         #LABELS
-        courseNumLab = Label(courseInfoFrame, text="Course Number:")
+        courseNumLab = Label(self.courseInfoFrame, text="Course Number:")
         courseNumLab.grid(row =0, column = 0) 
 
-        courseNameLab = Label(courseInfoFrame, text="Course Name:")
+        courseNameLab = Label(self.courseInfoFrame, text="Course Name:")
         courseNameLab.grid(row =1, column = 0)
 
-        instructorLab = Label(courseInfoFrame, text="Instructor:")
+        instructorLab = Label(self.courseInfoFrame, text="Instructor:")
         instructorLab.grid(row =2, column = 0)
 
-        designationLab = Label(courseInfoFrame, text="Designation:")
+        designationLab = Label(self.courseInfoFrame, text="Designation:")
         designationLab.grid(row =3, column = 0)
 
-        categoryLab = Label(courseInfoFrame, text="Category:")
+        categoryLab = Label(self.courseInfoFrame, text="Category:")
         categoryLab.grid(row =4, column = 0)
 
-        estimatedNumStudentsLab = Label(courseInfoFrame, text="Estimated # of students:")
-        estimatedNumStudentsLab.grid(row =5, column = 0) 
+        self.estimatedNumStudentsLab = Label(self.courseInfoFrame, text="Estimated # of students:")
+        self.estimatedNumStudentsLab.grid(row =5, column = 0) 
         
 
         #Entries for labels
 
         self.newCourseNum = StringVar()
-        courseNumEnt =Entry(courseInfoFrame, width =30, textvariable = self.newCourseNum)
+        courseNumEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.newCourseNum)
         courseNumEnt.grid(row=0, column =1)
 
         self.newCourseName = StringVar()
-        courseNameEnt =Entry(courseInfoFrame, width =30, textvariable = self.newCourseName)
+        courseNameEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.newCourseName)
         courseNameEnt.grid(row=1, column =1)
 
         self.newInstructor = StringVar()
-        newInstructorEnt =Entry(courseInfoFrame, width =30, textvariable = self.newInstructor)
+        newInstructorEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.newInstructor)
         newInstructorEnt.grid(row=2, column =1)
 
         self.estNumStudents = StringVar()
-        estNumStudentsEnt =Entry(courseInfoFrame, width =30, textvariable = self.estNumStudents)
-        estNumStudentsEnt.grid(row=5, column =1)
+        self.estNumStudentsEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.estNumStudents)
+        self.estNumStudentsEnt.grid(row=5, column =1)
+
+        self.AddCourseCat = StringVar()
+        self.AddCourseCat.set("Please Select")
+        self.catlist1=["cat1","cat 2", "cat 3", "cat 4"]
+        self.AddCC =OptionMenu(self.courseInfoFrame, self.AddCourseCat, *self.catlist1)
+        self.AddCC.grid(row=4, column =1)
+        self.ACrow=4
+
+        self.ACBut = Button(self.courseInfoFrame, text = "Add Category",width = 15, command = self.Add_Course_Cat)
+        self.ACBut.grid(row = 4,column = 2 ,  sticky = E)
+        
 
         self.addCourseDes=StringVar()
         self.addCourseDes.set("Please Select")
 
         #USE SQL to call list of Designation names called self.deslist
+        self.AACDes=StringVar()
+        self.AACDes.set("Please Select")
         self.deslist=["Add des1 here"," Add des2 here"]
-        self.addCourseDesdrop=OptionMenu(courseInfoFrame,self.MainPageDes,*self.deslist)
+        self.addCourseDesdrop=OptionMenu(self.courseInfoFrame,self.AACDes,*self.deslist)
         self.addCourseDesdrop.grid(row=3,column=1)
 
         #Put Buttons in Frame
-        buttonFrame = Frame(self.addCourseWin)
-        buttonFrame.grid(row = 1, column = 0, columnspan = 6)
+        self.buttonFrame = Frame(self.addCourseWin)
+        self.buttonFrame.grid(row = 1, column = 0, columnspan = 6)
 
-        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Back_Add_course)
+        backButton = Button(self.buttonFrame, text = "Back",width = 15, command = self.Back_Add_course)
         backButton.grid(row = 0,column = 0 ,  sticky = E)
         
-        submitButton = Button(buttonFrame, text = "Accept",width = 15)#, command =self.submitNewCourse)
+        submitButton = Button(self.buttonFrame, text = "Accept",width = 15)#, command =self.submitNewCourse)
         submitButton.grid(row = 0,column = 1,  sticky = E)
+
+        self.totalAClist=[]
+
+    def Add_Course_Cat(self):
+        #print("Adding Course")
+
+
+        self.ACrow=self.ACrow+1
+        
+        self.AddCourseCat1 = StringVar()
+        self.AddCourseCat1.set("Please Select")
+        
+        self.AddCC1 =OptionMenu(self.courseInfoFrame, self.AddCourseCat1, *self.catlist1)
+        self.AddCC1.grid(row=self.ACrow, column =1)
+
+        self.ACBut.destroy()
+        
+        self.ACBut = Button(self.courseInfoFrame, text = "Add Category",width = 15, command = self.Add_Course_Cat)
+        self.ACBut.grid(row = self.ACrow,column = 2 ,  sticky = E)
+
+        self.estNumStudentsEnt.destroy()
+
+        self.estNumStudents1 = StringVar()
+        self.estNumStudents1.set(self.estNumStudents.get())
+        
+        self.estNumStudentsEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.estNumStudents1)
+        self.estNumStudentsEnt.grid(row=self.ACrow+1, column =1)
+        
+        self.estimatedNumStudentsLab.destroy()
+        self.estimatedNumStudentsLab = Label(self.courseInfoFrame, text="Estimated # of students:")
+        self.estimatedNumStudentsLab.grid(row =self.ACrow+1, column = 0) 
+        
+
+        self.totalAClist.append(self.AddCourseCat1.get())
+
+        
+        
     
 
 win = Tk()
