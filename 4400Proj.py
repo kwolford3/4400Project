@@ -106,7 +106,10 @@ class CS4400:
         self.ChooseFunc()
         self.addCourseWin.withdraw()
         
-        
+    def Back_App_report(self):
+
+        self.ChooseFunc()
+        self.applicationReportWin.withdraw()       
         
 
     def Register(self):
@@ -535,8 +538,42 @@ class CS4400:
 
 
     def App_report(self):
-        #called by
-        print("admin view application reports")
+        self.applicationReportWin = Toplevel()
+        self.chooseFuncWin.withdraw()
+        self.applicationReportWin.title("Application Report")
+
+        #totalFrame + label
+        totalInfoF = Frame(self.applicationReportWin)
+        totalInfoF.grid(row = 0, column = 0, columnspan = 6)
+
+ #      self.totApps = SQL query to get the application total
+ #      self.totApps = SQL query to get total of accepted applications 
+        totAppLab = Label(totalInfoF, text="applications in total, accepted  applications")
+        totAppLab.grid(row =0, column = 0) 
+
+        #projectInfo Frame
+        projectInfoF = Frame(self.applicationReportWin,bd= 3,bg="black")
+        projectInfoF.grid(row = 1, column = 0, columnspan = 6)
+
+        projectLab = Label(projectInfoF, text="Project",width=20,bg="Light Blue")
+        projectLab.grid(row =0, column = 0, sticky=W,padx=3,pady=1)
+
+        numLab = Label(projectInfoF, text="Number of Applications",width=20,bg="Light Blue")
+        numLab.grid(row =0, column = 1, sticky=W,padx=3,pady=1)
+
+        acceptLab = Label(projectInfoF, text="Acceptance Rate",width=20,bg="Light Blue")
+        acceptLab.grid(row =0, column = 2, sticky=W,padx=3,pady=1)
+
+        top3Lab = Label(projectInfoF, text="Top 3 Major",width=20,bg="Light Blue")
+        top3Lab.grid(row =0, column = 3, sticky=W,padx=3,pady=1)
+
+        #the back button
+        buttonFrame = Frame(self.applicationReportWin)
+        buttonFrame.grid(row = 2, column = 0, columnspan = 6)
+
+        backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Back_App_report)
+        backButton.grid(row = 0,column = 0 ,  sticky = E)
+        
 
     def Add_proj(self):
         #called by
@@ -600,6 +637,7 @@ class CS4400:
 
         self.addCourseDes=StringVar()
         self.addCourseDes.set("Please Select")
+
         #USE SQL to call list of Designation names called self.deslist
         self.deslist=["Add des1 here"," Add des2 here"]
         self.addCourseDesdrop=OptionMenu(courseInfoFrame,self.MainPageDes,*self.deslist)
