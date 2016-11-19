@@ -67,8 +67,13 @@ class CS4400:
         self.addProjBut.grid(row=4,column=0)
         self.addCourseBut = Button(self.chooseFuncWin, text="Add a Course", command=self.Add_course)
         self.addCourseBut.grid(row=5,column=0)
-        self.logOutBut = Button(self.chooseFuncWin, text="Log Out")#need to add a command here
+        self.logOutBut = Button(self.chooseFuncWin, text="Log Out", command=self.Log_Out)#need to add a command here
         self.logOutBut.grid(row=6,column=0)
+
+    def Log_Out(self):
+        self.chooseFuncWin.withdraw()
+        return messagebox.showerror("Logged Out!","You are now Logged Out")
+        
 
 
     def Popular_Project(self):
@@ -278,24 +283,49 @@ class CS4400:
         
         #pull al list of all courses anf projects here will need SQL
         CPframeCounter=1
-        self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Prject Q","ProjectQ")]
+        self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Project Q","Project")]
         for tup in self.CPlist:
             Name=tup[0]
             typ=tup[1]
-            self.SelectBut=Button(self.CPframe, text =str(Name), width=70 ,command = self.view)
+            pair= (Name,typ)
+            self.SelectBut=Button(self.CPframe, text =str(Name), width=70 ,command = lambda pair= pair: self.view(pair))
             self.SelectBut.grid(row=CPframeCounter,column=0,sticky=W,padx=3,pady=1)
             self.lab=Label(self.CPframe, text =str(typ), width=20)
             self.lab.grid(row=CPframeCounter,column=1,sticky=W,pady=1)
             CPframeCounter=CPframeCounter+1
 
+    def view(self,P): #,T):
+       # print("View")
+        Name = P[0]
+        typ = P[1]
+        print(Name +" Is A " + typ ) # Prints Name of Project or sourse selected
+        if typ == "Project":
+            print("is a Project, run view Project")
+ #           self.ProjOfInterest=Name
+            self.View_Project(Name)
+            
+        if typ == "Course":
+            print("is a Course, run View Course")
+ #           self.CourseOfInterest=Name
+            self.View_course(Name)
+            
+            
+            
+        
+        # need to figure out if selected reult is a project or a course
+        
+        
+ #       will need to check if selected button is a course or a project and then run the respective view course or view project button below
 
-    def View_Project(self):
+
+
+    def View_Project(self,select):
         #called by Main_page (by selecting a project)
 
         #creating the View Project window and hiding the Main Page window
         self.viewProjWin = Toplevel()
         self.Main_pageWin.withdraw()
-        self.viewProjWin.title("View Project")
+        self.viewProjWin.title("View Project: "+str(select))
         
         #creating lefthand side labels (NO SQL) and buttons within View Project window
         advisorLab = Label(self.viewProjWin, text="Advisor:")
@@ -317,7 +347,7 @@ class CS4400:
 
         #creating title and righthand side labels (SQL INCLUDED/NEEDED)
         #need to insert SQL statements to retrieve actual information
-        self.SQLprojNameLab = Label(self.viewProjWin,text="Insert Proj Name SQL")
+        self.SQLprojNameLab = Label(self.viewProjWin,text=select)  #"Insert Proj Name SQL")
         self.SQLprojNameLab.grid(row=0,column=0,columnspan=2)
         self.SQLadvisor = Label(self.viewProjWin, text="Insert Advisor SQL")
         self.SQLadvisor.grid(row=1,column=1)
@@ -463,21 +493,15 @@ class CS4400:
         for tup in self.CPlist:
             Name=tup[0]
             typ=tup[1]
+            pair=(Name,typ)
             
-            self.SelectBut=Button(self.CPframe, text =str(Name), width=70, command = self.view)
+            self.SelectBut=Button(self.CPframe, text =str(Name), width=70, command = lambda pair= pair: self.view(pair))
             self.SelectBut.grid(row=CPframeCounter,column=0,sticky=W,padx=3,pady=1)
             self.lab=Label(self.CPframe, text =str(typ), width=20)
             self.lab.grid(row=CPframeCounter,column=1,sticky=W,pady=1)
             CPframeCounter=CPframeCounter+1
 
-    def view(self):
-        print("View")
-        print(self.lab["text"]) # only prints the last assignment of the variable not the one selected
-        print(self.SelectBut["text"])
-        
-        
- #       will need to check if selected button is a course or a project and then run the respective view course or view project button below
-
+    
     def Me_page(self):
         #called by
         #Creates ME window
@@ -575,18 +599,20 @@ class CS4400:
         #called by
         print ("view project page")
 
-    def View_course(self):
+    def View_course(self,select):
         #called by some function that has not been created yet? has no call right now
         #needs to be withdraw by previous pages
        # print ("view course page")
         self.ViewCourseWin=Toplevel()
-        self.ViewCourseWin.title("View Course")
+        self.Main_pageWin.withdraw()
+        
+        self.ViewCourseWin.title("View Course: "+str(select))
         #will be called from selections based on sql and main page
         self.courseListinfo=("Example Course Name","Example Instructor","Example Designation", "Example Cat", "##")
         
         VCLab1 =Label(self.ViewCourseWin, text="Course Name:",bg="Light Blue")
         VCLab1.grid(row = 0, column=0,padx = 5, pady=5 )
-        VCName =Label(self.ViewCourseWin, text=self.courseListinfo[0])
+        VCName =Label(self.ViewCourseWin, text=select)#self.courseListinfo[0])
         VCName.grid(row = 0, column=1,padx = 5, pady=5)
         
         VCLab1 =Label(self.ViewCourseWin, text="Instructor:",bg="Light Blue")
@@ -852,14 +878,17 @@ class CS4400:
 
         if self.ApAcRow == 4 : #first run around
             self.APAClist.append(self.ProjPageCat.get())
+            self.ProjPageCatdrop.config(state="disabled")
 
-        if self.ApAcRow > 4: 
+        if self.ApAcRow > 4:
+            
             if self.ProjPageCat1.get() == "Please Select":
  #               self.ApAcRow  = self.ApAcRow  - 1
                 return messagebox.showerror("OOps!","Please Pick A category before trying to add a new one")
 
             if self.ProjPageCat1.get() not in self.APAClist :
                 self.APAClist.append(self.ProjPageCat1.get())
+                self.ProjPageCatdrop1.config(state="disabled")
 
             else:
 #                self.ApAcRow = self.ApAcRow - 1
@@ -867,7 +896,7 @@ class CS4400:
 
         self.ApAcRow = self.ApAcRow + 1
 
-
+        
         self.ProjPageCat1 = StringVar()
         self.ProjPageCat1.set("Please Select")
         
@@ -993,6 +1022,7 @@ class CS4400:
         
         if self.ACrow == 4 : #first run around
             self.totalAClist.append(self.AddCourseCat.get())
+            self.AddCC.config(state="disabled")
 
         
 
@@ -1006,6 +1036,7 @@ class CS4400:
             
             if self.AddCourseCat1.get() not in self.totalAClist :
                 self.totalAClist.append(self.AddCourseCat1.get())
+                self.AddCC1.config(state="disabled")
 
             else:
  #               self.ACrow = self.ACrow - 1
@@ -1061,3 +1092,4 @@ class CS4400:
 win = Tk()
 app = CS4400(win)
 win.mainloop()
+
