@@ -1,5 +1,5 @@
 from tkinter import *
-#import pymysql
+import pymysql
 import os
 from re import findall
 
@@ -24,28 +24,40 @@ class CS4400:
         self.regisBut.grid(row=2,column=1)
 
     def Login(self):
-        #called by _init_
         username = self.user.get()
         password =self.passw.get()
-        # Need SQL Code to check if login is succesful
-        # need SQL COde to check flag type of user 
-        # if self.flag="Admin":
-            #self.ChooseFunc()
-        #else:
-        # self.flag="Student"
         
-        print("Logged in")
-        print(username)
-        print(password)
-        if username == "tylerhall":  #this is temporary; would normally be a
-                                        #admin username (will have to get from SQL)
-            self.ChooseFunc()
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql="SELECT Flag from User where UserName =%s and Password=%s"
+        n =cursor.execute(sql,(username,password))
+        
+        self.flagRet=cursor.fetchall()
+
+        cursor.close()
+        db.commit()
+        db.close()
+   
+ #       print(self.flagRet)
+        
+        if n == 1: 
+ #           messagebox.showerror("Login Successful!","Login Succesful")
+ #           print("login successful")
+            
+            
+	#if student main, if admin choose functionality
+            for tup in self.flagRet:
+                self.flag = tup[0]
+               
+            if self.flag == "Student":
+                 self.Main_page()
+            if self.flag == "Admin":
+                
+                self.ChooseFunc()
         else:
-            print("Invalid username") #this will need to become an error window
-        #self.loginWin.destroy() # will  need to do once a login is accepted
-            #this is done inside ChooseFunc function for admin users
-            self.Main_page() #will need to put under else once sql is added
-            #this only needs to happen if a student logs in
+            return messagebox.showerror("Error","Credentials are invalid")
+
+
 
     def ChooseFunc(self):
         #this function is called by Login if the user logs in as a Admin
@@ -645,8 +657,21 @@ class CS4400:
 
     def View_apps(self):
         #called by the "View applications button" in the Choose Functionality Pgae
+        self.projMajYearStatlist =[]
+        
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"
+        cursor.execute(sql)
+        self.applications=cursor.fetchall()
+#        print(self.applications)
+        #or tup in self.applications:
+#            self.projMajYearStatlist.append(tup[0]), tup[1], tup[2], tup[3])
+#need to take out projMajYearStatlist in current code
 
-        #self.chooseFunWin.withdraw()
+        cursor.close()
+        db.commit()
+        db.close()
 
         #creates View Apps window
         self.viewAppsWin = Toplevel()
@@ -672,8 +697,8 @@ class CS4400:
 
         #pull al list of all Project, Applicant Major/Year, Status
         projectframeCounter=1
-        self.projMajYearStatlist =[("Project A","CS","Freshman","Pending"),("Project B","ECE","Junior","Rejected"),("Project C","IE","Senior","Pending"),("Project F","INTA","Senior","Accepted")]
-        for tup in self.projMajYearStatlist:
+ #       self.projMajYearStatlist =[("Project A","CS","Freshman","Pending"),("Project B","ECE","Junior","Rejected"),("Project C","IE","Senior","Pending"),("Project F","INTA","Senior","Accepted")]
+        for tup in self.applications:
             projectName=tup[0]
             applicantMajor=tup[1]
             applicantYear=tup[2]
