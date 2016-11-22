@@ -657,17 +657,13 @@ class CS4400:
 
     def View_apps(self):
         #called by the "View applications button" in the Choose Functionality Pgae
-        self.projMajYearStatlist =[]
+        #self.projMajYearStatlist =[]
         
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql = "SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"
         cursor.execute(sql)
         self.applications=cursor.fetchall()
-#        print(self.applications)
-        #or tup in self.applications:
-#            self.projMajYearStatlist.append(tup[0]), tup[1], tup[2], tup[3])
-#need to take out projMajYearStatlist in current code
 
         cursor.close()
         db.commit()
@@ -683,43 +679,48 @@ class CS4400:
         self.projectFrame.grid(row = 0, column = 0, columnspan = 6)
 
         #Labels for Project, Applicant Major/Year, Status
-        projectLabel =Label(self.projectFrame, text="Project",width = 20,bg="Light Blue")
-        projectLabel.grid(row = 0, column=0,sticky=W,padx=3,pady=1)
+        projectLabel =Label(self.projectFrame, text="Project",width = 30,bg="Light Blue")
+        projectLabel.grid(row = 0, column=1,sticky=W,padx=3,pady=1)
 
         appMajorLabel =Label(self.projectFrame, text="Applicant Major",width = 20,bg="Light Blue")
-        appMajorLabel.grid(row = 0, column=1,sticky=W,padx=3,pady=1)
+        appMajorLabel.grid(row = 0, column=2,sticky=W,padx=3,pady=1)
 
         appYearLabel =Label(self.projectFrame, text="Applicant Year",width = 20,bg="Light Blue")
-        appYearLabel.grid(row = 0, column=2,sticky=W,padx=3,pady=1)
+        appYearLabel.grid(row = 0, column=3,sticky=W,padx=3,pady=1)
 
         statusLabel =Label(self.projectFrame, text="Status",width = 20,bg="Light Blue")
-        statusLabel.grid(row = 0, column=3,sticky=W,padx=3,pady=1)
+        statusLabel.grid(row = 0, column=4,sticky=W,padx=3,pady=1)
 
         #pull al list of all Project, Applicant Major/Year, Status
         projectframeCounter=1
- #       self.projMajYearStatlist =[("Project A","CS","Freshman","Pending"),("Project B","ECE","Junior","Rejected"),("Project C","IE","Senior","Pending"),("Project F","INTA","Senior","Accepted")]
+        pendingRowList = []
+        self.pendingTuple = []
         for tup in self.applications:
             projectName=tup[0]
             applicantMajor=tup[1]
             applicantYear=tup[2]
             applicantStatus=tup[3]
-            lab=Label(self.projectFrame, text =str(projectName), width=20)
-            lab.grid(row=projectframeCounter,column=0,sticky=W,padx=3,pady=1)
-            lab=Label(self.projectFrame, text =str(applicantMajor), width=20)
+            lab=Label(self.projectFrame, text =str(projectName), width=30)
             lab.grid(row=projectframeCounter,column=1,sticky=W,padx=3,pady=1)
-            lab=Label(self.projectFrame, text =str(applicantYear), width=20)
+            lab=Label(self.projectFrame, text =str(applicantMajor), width=20)
             lab.grid(row=projectframeCounter,column=2,sticky=W,padx=3,pady=1)
-            lab=Label(self.projectFrame, text =str(applicantStatus), width=20)
+            lab=Label(self.projectFrame, text =str(applicantYear), width=20)
             lab.grid(row=projectframeCounter,column=3,sticky=W,padx=3,pady=1)
+            lab=Label(self.projectFrame, text =str(applicantStatus), width=20)
+            lab.grid(row=projectframeCounter,column=4,sticky=W,padx=3,pady=1)
+            if applicantStatus == "Pending":
+                pendingRowList.append(projectframeCounter)
+                tupsNeeded = (projectframeCounter,projectName,applicantMajor,applicantYear,applicantStatus)
+                self.pendingTuple.append(tupsNeeded)
             projectframeCounter=projectframeCounter+1
 
-        #We have to import all Project/Applicant names/year / Status from Database
-        #Create function for radiobuttons that will only be assgned to the Project that have status: Pending
 
         #Radio BUttons
- #       self.viewApps=StringVar()
- #       self.ProjRButton= Radiobutton(self.projectFrame, variable=self.viewApps)
- #       self.ProjRButton.grid(row=variable,column=0)
+        self.variableRBut = StringVar()
+        for i in pendingRowList:
+            self.viewApps=IntVar()
+            self.ProjRButton= Radiobutton(self.projectFrame, variable=self.variableRBut, value=i)
+            self.ProjRButton.grid(row=i,column=0)
 
         
         #creates frame for Back Accept Reject Button
@@ -728,10 +729,51 @@ class CS4400:
 
         backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Back_View_apps)
         backButton.grid(row = 0,column = 0 ,  sticky = E)
-        acceptButton = Button(buttonFrame, text = "Accept",width = 15)#, command =self.acceptApplicant)
+        acceptButton = Button(buttonFrame, text = "Accept",width = 15, command =self.Accept_Apps)
         acceptButton.grid(row = 0,column = 3,  sticky = E)
-        rejectButton = Button(buttonFrame, text = "Reject",width = 15)#, command =self.rejectApplicant)
+        rejectButton = Button(buttonFrame, text = "Reject",width = 15, command =self.Reject_Apps)
         rejectButton.grid(row = 0,column = 4,  sticky = E)
+
+    def Accept_Apps(self):
+        value = self.variableRBut.get()
+        for i in self.pendingTuple:
+            for stuff in i:
+                if int(value) == int(stuff[0]):
+                    pName = stuff[1]
+                    aMaj = stuff[2]
+                    aYear = stuff[3]
+                    aStatus = stuff[4]
+                    db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+                    cursor = db.cursor()
+                    sql = "UPDATE Application SET a.Status = Accepted WHERE p.Pname = pName, s.Mname= aMaj, s.Year = aYear, a.Status = Pending"   
+                    cursor.execute(sql)
+# write SQl that will udpate the staus in Application where these values above match up 
+ #"SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"                   
+
+                    cursor.close()
+                    db.commit()
+                    db.close()
+                    
+
+    def Reject_Apps(self):
+        value = self.variableRBut.get()
+        for i in self.pendingTuple:
+            for stuff in i:
+                if int(value) == int(stuff[0]):
+                    pName = stuff[1]
+                    aMaj = stuff[2]
+                    aYear = stuff[3]
+                    aStatus = stuff[4]
+                    db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+                    cursor = db.cursor()
+                    sql = "UPDATE Application SET a.Status = Rejected WHERE p.Pname = pName, s.Mname= aMaj, s.Year = aYear, a.Status = Pending"   
+                    cursor.execute(sql)
+# write SQl that will udpate the staus in Application where these values above match up 
+ #"SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"                   
+
+                    cursor.close()
+                    db.commit()
+                    db.close()
         
     def App_report(self):
         self.applicationReportWin = Toplevel()
