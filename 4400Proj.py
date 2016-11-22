@@ -717,7 +717,7 @@ class CS4400:
 
 
         #Radio BUttons
-        self.variableRBut = StringVar()
+        self.variableRBut = IntVar()
         for i in pendingRowList:
             self.viewApps=IntVar()
             self.ProjRButton= Radiobutton(self.projectFrame, variable=self.variableRBut, value=i)
@@ -737,45 +737,42 @@ class CS4400:
 
     def Accept_Apps(self):
         value = self.variableRBut.get()
+        p = "Pending"
+        z= "Accepted"
         for i in self.pendingTuple:
-            for stuff in i:
-                if int(value) == int(stuff[0]):
-                    pName = stuff[1]
-                    aMaj = stuff[2]
-                    aYear = stuff[3]
-                    aStatus = stuff[4]
-                    aEmail = stuff[5]
-                    db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-                    cursor = db.cursor()
-                    sql = "UPDATE Application a SET a.Status = 'Accepted' WHERE a.Pname = pName, a.GtEmail = aEmail, a.Status = 'Pending'"   
-                    cursor.execute(sql)
-# write SQl that will udpate the staus in Application where these values above match up 
- #"SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"                   
-
-                    cursor.close()
-                    db.commit()
-                    db.close()
+            if value == i[0]:
+                print(i[0])
+                pName = i[1]
+                aEmail = i[5]
+                db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+                cursor = db.cursor()
+                sql = "UPDATE Application a SET a.Status = %s WHERE a.Pname = %s and a.GtEmail = %s and a.Status = %s"   
+                cursor.execute(sql,(z,pName,aEmail,p))
+                cursor.close()
+                db.commit()
+                db.close()
+                self.viewAppsWin.withdraw() 
+                self.View_apps()
                     
 
     def Reject_Apps(self):
         value = self.variableRBut.get()
+        p = "Pending"
+        z= "Rejected"
         for i in self.pendingTuple:
-            for stuff in i:
-                if int(value) == int(stuff[0]):
-                    pName = stuff[1]
-                    aMaj = stuff[2]
-                    aYear = stuff[3]
-                    aStatus = stuff[4]
-                    db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-                    cursor = db.cursor()
-                    sql = "UPDATE Application SET a.Status = Rejected WHERE p.Pname = pName, s.Mname= aMaj, s.Year = aYear, a.Status = Pending"   
-                    cursor.execute(sql)
-# write SQl that will udpate the staus in Application where these values above match up 
- #"SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"                   
-
-                    cursor.close()
-                    db.commit()
-                    db.close()
+            if value == i[0]:
+                print(i[0])
+                pName = i[1]
+                aEmail = i[5]
+                db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+                cursor = db.cursor()
+                sql = "UPDATE Application a SET a.Status = %s WHERE a.Pname = %s and a.GtEmail = %s and a.Status = %s"   
+                cursor.execute(sql,(z,pName,aEmail,p))
+                cursor.close()
+                db.commit()
+                db.close()
+                self.viewAppsWin.withdraw() 
+                self.View_apps()
         
     def App_report(self):
         self.applicationReportWin = Toplevel()
