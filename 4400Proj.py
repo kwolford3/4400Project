@@ -661,7 +661,7 @@ class CS4400:
         
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
-        sql = "SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"
+        sql = "SELECT p.Pname, s.Mname, s.Year, a.Status, a.GtEmail from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"
         cursor.execute(sql)
         self.applications=cursor.fetchall()
 
@@ -700,6 +700,7 @@ class CS4400:
             applicantMajor=tup[1]
             applicantYear=tup[2]
             applicantStatus=tup[3]
+            applicantEmail = tup[4]
             lab=Label(self.projectFrame, text =str(projectName), width=30)
             lab.grid(row=projectframeCounter,column=1,sticky=W,padx=3,pady=1)
             lab=Label(self.projectFrame, text =str(applicantMajor), width=20)
@@ -710,7 +711,7 @@ class CS4400:
             lab.grid(row=projectframeCounter,column=4,sticky=W,padx=3,pady=1)
             if applicantStatus == "Pending":
                 pendingRowList.append(projectframeCounter)
-                tupsNeeded = (projectframeCounter,projectName,applicantMajor,applicantYear,applicantStatus)
+                tupsNeeded = (projectframeCounter,projectName,applicantMajor,applicantYear,applicantStatus, applicantEmail)
                 self.pendingTuple.append(tupsNeeded)
             projectframeCounter=projectframeCounter+1
 
@@ -743,9 +744,10 @@ class CS4400:
                     aMaj = stuff[2]
                     aYear = stuff[3]
                     aStatus = stuff[4]
+                    aEmail = stuff[5]
                     db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
                     cursor = db.cursor()
-                    sql = "UPDATE Application SET a.Status = Accepted WHERE p.Pname = pName, s.Mname= aMaj, s.Year = aYear, a.Status = Pending"   
+                    sql = "UPDATE Application a SET a.Status = 'Accepted' WHERE a.Pname = pName, a.GtEmail = aEmail, a.Status = 'Pending'"   
                     cursor.execute(sql)
 # write SQl that will udpate the staus in Application where these values above match up 
  #"SELECT p.Pname, s.Mname, s.Year, a.Status from Application a JOIN Project p on a.Pname = p.Pname JOIN Student s on a.GtEmail = s.GtEmail"                   
