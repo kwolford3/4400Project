@@ -161,7 +161,8 @@ class CS4400:
 
     def Register(self):
         #called by _init_
-        print("Registered")
+        #print("Registered")
+       
         self.loginWin.withdraw()
         #creates registration window
         self.registerWin = Toplevel()
@@ -198,21 +199,119 @@ class CS4400:
         #Left as redirecting to login page. Can change if needed.
         self.createBut =Button(self.registerWin, text="Create", command = self.RegisterCheck)
         self.createBut.grid(row=4,column=0)
-        print("testing")
-        #self.registerWin.deiconify() Moved to function below, only want to destroy windoe if register is good
+        
 
     def RegisterCheck(self):
-        print("Register check")
+      
         username = self.user.get()
         userEmail = self.email.get()
         password =self.passw.get()
-        confirmPass = self.conf
-        print(username, userEmail, password, confirmPass)
-        print("calling main page")
+        confirmPass = self.conf.get()
+
+        if "@gatech.edu" != userEmail[-11::]:
+            return messagebox.showerror("Error","Enter Georga Tech Email Address")
+        if username == "" or userEmail == "" or password == "" or confirmPass == "":
+            return messagebox.showerror("Error","complete all entry fields")
+        if password != confirmPass:
+            return messagebox.showerror("Error","Passwords Do Not Match")
+
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql="INSERT INTO User(UserName, Password, Flag) VALUES (%s, %s,%s)"
+        try:
+            n =cursor.execute(sql,(username,password,"Student"))
+            cursor.close()
+            db.commit()
+            db.close()
+            print("added to user")
+            # may need to seperate into two try statemments and add database rollback
+            db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+            cursor = db.cursor()
+            sql = "INSERT into Student (UserName,GtEmail) VALUES (%s,%s)"
+            n =cursor.execute(sql,(username,userEmail))
+            print("added to student")
+            cursor.close()
+            db.commit()
+            db.close()
+            
+
+        except:
+            cursor.close()
+            db.commit()
+            db.close()
+            return messagebox.showerror("Error","DataBase rejected you!!! Try Again")
+
+ 
+        
         self.registerWin.destroy()
         self.Main_page() #ONLY RUN IF A SUCCESFUL REGISTER
         
     def Main_page(self):
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Mname from Major"
+        cursor.execute(sql)
+        self.majors=cursor.fetchall()
+        self.majlist=[]
+        for tup in self.majors:
+            self.majlist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Catname from Category"
+        cursor.execute(sql)
+        self.cats=cursor.fetchall()
+        self.catlist=[]
+        for tup in self.cats:
+            self.catlist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT DesigName from Desig"
+        cursor.execute(sql)
+        self.des=cursor.fetchall()
+        self.deslist=[]
+        for tup in self.des:
+            self.deslist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Cname from Course"
+        cursor.execute(sql)
+        self.C=cursor.fetchall()
+        self.Clist=[]
+        for tup in self.C:
+            ntup=(tup[0],"Course")
+            self.Clist.append(ntup)
+        #print(self.Clist)           
+        cursor.close()
+        db.commit()
+        db.close()
+
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Pname from Project"
+        cursor.execute(sql)
+        self.P=cursor.fetchall()
+        self.Plist=[]
+        for tup in self.P:
+            ntup=(tup[0],"Project")
+            self.Plist.append(ntup)           
+        cursor.close()
+        db.commit()
+        db.close()
+
+        self.CPlist=self.Plist+self.Clist # NEED A SCROLL BAR!!!!!!!!!!!
+        
         #called by ME Page
         #also called by a succesfull login page
         self.loginWin.withdraw()
@@ -232,7 +331,7 @@ class CS4400:
         self.MainPageCat=StringVar()
         self.MainPageCat.set("Please Select")
         #USE SQL to call list of category names called self.catlist
-        self.catlist=["Add cat1 here"," Add Cat 2 here", "Cat 3", "Cat 4", "Cat 5"]
+ 
         self.MainPagedrop=OptionMenu(self.Main_pageWin,self.MainPageCat,*self.catlist)
         self.MainPagedrop.grid(row=1,column=3)
         self.MainPageRow = 0
@@ -244,8 +343,8 @@ class CS4400:
         #print("ran")
         self.MainPageDes=StringVar()
         self.MainPageDes.set("Please Select")
-        #USE SQL to call list of Designation names called self.deslist
-        self.deslist=["Add des1 here"," Add des2 here"]
+        
+ #       self.deslist=["Add des1 here"," Add des2 here"]
         self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageDes,*self.deslist)
         self.MainPageDesdrop.grid(row=2,column=1)
 
@@ -254,8 +353,8 @@ class CS4400:
         #print("ran")
         self.MainPageMaj=StringVar()
         self.MainPageMaj.set("Please Select")
-        #USE SQL to call list of Designation names called self.deslist
-        self.majlist=["Add maj1 here"," Add maj2 here"]
+        
+ #       self.majlist=["Add maj1 here"," Add maj2 here"]
         self.MainPageMajdrop=OptionMenu(self.Main_pageWin,self.MainPageMaj,*self.majlist)
         self.MainPageMajdrop.grid(row=3,column=1)
 
@@ -264,7 +363,7 @@ class CS4400:
         #print("ran")
         self.MainPageYear=StringVar()
         self.MainPageYear.set("Please Select")
-        #USE SQL to call list of Designation names called self.deslist
+        
         self.yearlist=["Freshman","Sophmore","Junior","Senior"]
         self.MainPageYeardrop=OptionMenu(self.Main_pageWin,self.MainPageYear,*self.yearlist)
         self.MainPageYeardrop.grid(row=4,column=1)
@@ -295,7 +394,8 @@ class CS4400:
         
         #pull al list of all courses anf projects here will need SQL
         CPframeCounter=1
-        self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Project Q","Project")]
+               
+        #self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Project Q","Project")]
         for tup in self.CPlist:
             Name=tup[0]
             typ=tup[1]
@@ -333,6 +433,16 @@ class CS4400:
 
     def View_Project(self,select):
         #called by Main_page (by selecting a project)
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        # This is not right, beet fo do a full outer join of these three tables
+        sql = "SELECT Aname, Description, DesigName, Catname, Requirement, Num_Students FROM Project NATURAL JOIN Proj_Cat NATURAL JOIN Requires where Pname =%s"
+ #       SELECT p.Pname, p.Aname, p.Description, p.DesigName, c.Catname, r.requirement, p.Num_Students from Project p FULL OUTER JOIN Proj_Cat c on p.Pname = c.Pname FULL OUTER JOIN Requires r on r.Pname = p.Pname
+        cursor.execute(sql,(select))
+        self.projinfo=cursor.fetchall()
+        cursor.close()
+        db.commit()
+        db.close()
 
         #creating the View Project window and hiding the Main Page window
         self.viewProjWin = Toplevel()
@@ -342,7 +452,7 @@ class CS4400:
         #creating lefthand side labels (NO SQL) and buttons within View Project window
         advisorLab = Label(self.viewProjWin, text="Advisor:")
         advisorLab.grid(row=1,column=0)
-        descriptionLab = Label(self.viewProjWin, text="Description:")
+        descriptionLab = Label(self.viewProjWin, text="Description:")#, width=60)
         descriptionLab.grid(row=2,column=0)
         designationLab = Label(self.viewProjWin, text="Designation:")
         designationLab.grid(row=3,column=0)
@@ -361,17 +471,17 @@ class CS4400:
         #need to insert SQL statements to retrieve actual information
         self.SQLprojNameLab = Label(self.viewProjWin,text=select)  #"Insert Proj Name SQL")
         self.SQLprojNameLab.grid(row=0,column=0,columnspan=2)
-        self.SQLadvisor = Label(self.viewProjWin, text="Insert Advisor SQL")
+        self.SQLadvisor = Label(self.viewProjWin, text=self.projinfo[0][0])
         self.SQLadvisor.grid(row=1,column=1)
-        self.SQLdescription = Label(self.viewProjWin, text="Insert Description SQL")
+        self.SQLdescription = Message(self.viewProjWin, text=self.projinfo[0][1], width=300)
         self.SQLdescription.grid(row=2,column=1)
-        self.SQLdesignation = Label(self.viewProjWin, text="Insert Designation SQL")
+        self.SQLdesignation = Label(self.viewProjWin, text=self.projinfo[0][2])
         self.SQLdesignation.grid(row=3,column=1)
-        self.SQLcategory = Label(self.viewProjWin, text="Insert Category SQL")
+        self.SQLcategory = Label(self.viewProjWin, text=self.projinfo[0][3])
         self.SQLcategory.grid(row=4,column=1)
-        self.SQLrequire = Label(self.viewProjWin, text="Insert Requirements SQL")
+        self.SQLrequire = Label(self.viewProjWin, text=self.projinfo[0][4])
         self.SQLrequire.grid(row=5,column=1)
-        self.SQLnumStud = Label(self.viewProjWin, text="Insert Estimated # of Students SQL")
+        self.SQLnumStud = Label(self.viewProjWin, text=str(self.projinfo[0][5]))
         self.SQLnumStud.grid(row=6,column=1)
 
 
@@ -534,7 +644,34 @@ class CS4400:
         self.meWin.withdraw()
         self.Main_page()
 
+# supposed to run every time the option menu is selected in edit profile but is not!!!!
+    def dept(self,v):
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Dname from Major where Mname = %s"
+        cursor.execute(sql,(v))
+        self.dp=cursor.fetchall()
+ #       self.dp=self.dp[0]
+        cursor.close()
+        db.commit()
+        db.close()
+        print(self.dp)
+
+# need ot get option menu to run every time the menu is changed
     def Edit_profile(self):
+        # GETTING MAJOR LIST!!!
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Mname from Major"
+        cursor.execute(sql)
+        self.majors=cursor.fetchall()
+        self.majlist=[]
+        for tup in self.majors:
+            self.majlist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+
         #called by Me Page
         self.meWin.withdraw()
         self.editWin = Toplevel()
@@ -549,8 +686,8 @@ class CS4400:
         self.EditPageMaj=StringVar()
         self.EditPageMaj.set("Please Select")
         #USE SQL to call list of major names called self.majlist
-        self.majlist=["Add maj1 here"," Add maj2 here"]
-        self.EditPageMajdrop=OptionMenu(self.editWin,self.EditPageMaj,*self.majlist)
+        
+        self.EditPageMajdrop=OptionMenu(self.editWin,self.EditPageMaj,*self.majlist, command=self.dept(self.EditPageMaj.get()))
         self.EditPageMajdrop.grid(row=0,column=1)
 
         self.EditPageYr=StringVar()
@@ -565,6 +702,8 @@ class CS4400:
         self.backBut = Button(self.editWin, text = "Back", command = self.EditBack)
         self.backBut.grid(row=3, column=0)
         self.editWin.deiconify()
+        
+    
         
     def EditBack(self):
         self.editWin.withdraw()
