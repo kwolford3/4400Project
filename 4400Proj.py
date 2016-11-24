@@ -436,13 +436,49 @@ class CS4400:
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         # This is not right, beet fo do a full outer join of these three tables
-        sql = "SELECT Aname, Description, DesigName, Catname, Requirement, Num_Students FROM Project NATURAL JOIN Proj_Cat NATURAL JOIN Requires where Pname =%s"
- #       SELECT p.Pname, p.Aname, p.Description, p.DesigName, c.Catname, r.requirement, p.Num_Students from Project p FULL OUTER JOIN Proj_Cat c on p.Pname = c.Pname FULL OUTER JOIN Requires r on r.Pname = p.Pname
+ #       sql = "SELECT Aname, Description, DesigName, Catname, Requirement, Num_Students FROM Project NATURAL JOIN Proj_Cat NATURAL JOIN Requires where Pname =%s"
+        sql = "SELECT p.Aname, p.Description, p.DesigName, c.Catname, r.requirement, p.Num_Students from Project p Left JOIN Proj_Cat c on p.Pname = c.Pname Left JOIN Requires r on r.Pname = p.Pname where p.Pname=%s"
         cursor.execute(sql,(select))
         self.projinfo=cursor.fetchall()
         cursor.close()
         db.commit()
         db.close()
+        count=0
+        count1 =0
+ #       print(self.projinfo)
+        require=""
+        cat = ""
+        for item in self.projinfo:
+            count=count+1
+            if item[4] == None:
+                require= "None"
+            elif count == 1:
+                if item[4] not in require:
+                    require =require+item[4]
+                
+            else:
+                if item[4] not in require:
+                    require=require+", "+item[4]
+
+        for item in self.projinfo:
+            count1=count1+1
+            #if item[4] == None:
+#                require= "None"
+            if count1 == 1:
+                if item[3] not in cat:
+                    cat =cat+item[3]
+                
+            else:
+                if item[3] not in cat:
+                    cat=cat+", "+item[3]
+                
+                
+ #       print(require)
+ #       print(cat)
+        
+        
+            
+            
 
         #creating the View Project window and hiding the Main Page window
         self.viewProjWin = Toplevel()
@@ -477,9 +513,9 @@ class CS4400:
         self.SQLdescription.grid(row=2,column=1)
         self.SQLdesignation = Label(self.viewProjWin, text=self.projinfo[0][2])
         self.SQLdesignation.grid(row=3,column=1)
-        self.SQLcategory = Label(self.viewProjWin, text=self.projinfo[0][3])
+        self.SQLcategory = Label(self.viewProjWin, text=cat)#self.projinfo[0][3])
         self.SQLcategory.grid(row=4,column=1)
-        self.SQLrequire = Label(self.viewProjWin, text=self.projinfo[0][4])
+        self.SQLrequire = Label(self.viewProjWin, text=require) #self.projinfo[0][4])
         self.SQLrequire.grid(row=5,column=1)
         self.SQLnumStud = Label(self.viewProjWin, text=str(self.projinfo[0][5]))
         self.SQLnumStud.grid(row=6,column=1)
