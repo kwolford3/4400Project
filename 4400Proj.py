@@ -1044,7 +1044,18 @@ class CS4400:
         self.ProjPageCat=StringVar()
         self.ProjPageCat.set("Please Select")
         #USE SQL to call list of cat names called self.catlist
-        self.catlist3=["Add cat1 here"," Add cat2 here", "No Requirement"]
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Catname from Category"
+        self.cursor.execute(sql)
+        self.categories=self.cursor.fetchall()
+        for tup in self.categories:
+            catlist3.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+        catlist3.append("No Requirement")
+        #self.catlist3=["Add cat1 here"," Add cat2 here", "No Requirement"]
 
         ########
         
@@ -1074,8 +1085,19 @@ class CS4400:
         #DESIGNATION
         self.ProjPageDes=StringVar()
         self.ProjPageDes.set("Please Select")
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT DesigName from Desig"
+        self.cursor.execute(sql)
+        self.designation=self.cursor.fetchall()
+        for tup in self.designation:
+            deslist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+        deslist.append("No Requirement")
         #USE SQL to call list of des names called self.deslist
-        self.deslist=["Add des1 here"," Add des2 here", "No Requirement"]
+        #self.deslist=["Add des1 here"," Add des2 here", "No Requirement"]
         self.ProjPageDesdrop=OptionMenu(projInfoFrame2,self.ProjPageDes,*self.deslist)
         self.ProjPageDesdrop.grid(row=0,column=1)
         
@@ -1086,8 +1108,19 @@ class CS4400:
         #MAJOR
         self.ProjPageMaj=StringVar()
         self.ProjPageMaj.set("Please Select")
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Mname from Major"
+        self.cursor.execute(sql)
+        self.majors=self.cursor.fetchall()
+        for tup in self.majors:
+            majlist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+        majlist.append("No Requirement")
         #USE SQL to call list of major names called self.majlist
-        self.majlist=["Add maj1 here"," Add maj2 here", "No Requirement"]
+        #self.majlist=["Add maj1 here"," Add maj2 here", "No Requirement"]
         self.ProjPageMajdrop=OptionMenu(projInfoFrame2,self.ProjPageMaj,*self.majlist)
         self.ProjPageMajdrop.grid(row=2,column=1)
         #YEAR
@@ -1099,8 +1132,18 @@ class CS4400:
         #DEPARTMENT
         self.ProjPageDept=StringVar()
         self.ProjPageDept.set("Please Select")
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Dname from Department"
+        self.cursor.execute(sql)
+        self.departments=self.cursor.fetchall()
+        for tup in self.departments:
+            deptlist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
         #USE SQL to call list of dept names called self.deptlist
-        self.deptlist=["Add dept1 here"," Add dept2 here", "No Requirement"]
+        #self.deptlist=["Add dept1 here"," Add dept2 here", "No Requirement"]
         self.ProjPageDeptdrop=OptionMenu(projInfoFrame2,self.ProjPageDept,*self.deptlist)
         self.ProjPageDeptdrop.grid(row=4,column=1)
 
@@ -1108,9 +1151,29 @@ class CS4400:
         backButton = Button(self.addProjectWin, text = "Back",width = 15, command = self.ApBack)
         backButton.grid(row = 10,column = 0 ,  sticky = E)
         
-        submitButton = Button(self.addProjectWin, text = "Submit",width = 15)#, command =self.submitNewCourse)
+        submitButton = Button(self.addProjectWin, text = "Submit",width = 15, command =self.submitNewProject)
         submitButton.grid(row = 10,column = 1,  sticky = E)
         self.APAClist =[]
+
+    def submitNewProject(self):
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "INSERT into Project(Pname, Num_Students, Aname, Aemail, Description, DesigName) \
+               VALUES(self.projName, self.estNum, self.advisor, self.advisorEm, self.descript, self.ProjPageDes)"
+        self.cursor.execute(sql)
+        cursor.close()
+        db.commit()
+        db.close()
+        #Categories
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        for n in self.APAClist:
+            sql = "INSERT into Proj_Cat(Pname, Catname) VALUES(self.projName, n)"
+        cursor.close()
+        db.commit()
+        db.close()
+        #NEED TO WORK ON REQUIREMENT TABLE
+        
 
     def CreateProjAddCat(self):
         #print("adding a cat for adding a project")
@@ -1224,7 +1287,18 @@ class CS4400:
 
         self.AddCourseCat = StringVar()
         self.AddCourseCat.set("Please Select")
-        self.catlist1=["cat1","cat 2", "cat 3", "cat 4"]
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Catname from Category"
+        self.cursor.execute(sql)
+        self.categories=self.cursor.fetchall()
+        for tup in self.categories:
+            catlist1.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+        catlist1.append("No Requirement")
+        #self.catlist1=["cat1","cat 2", "cat 3", "cat 4"]
         self.AddCC =OptionMenu(self.courseInfoFrame, self.AddCourseCat, *self.catlist1)
         self.AddCC.grid(row=4, column =1)
         self.ACrow=4
@@ -1239,7 +1313,18 @@ class CS4400:
         #USE SQL to call list of Designation names called self.deslist
         self.AACDes=StringVar()
         self.AACDes.set("Please Select")
-        self.deslist=["Add des1 here"," Add des2 here"]
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT DesigName from Desig"
+        self.cursor.execute(sql)
+        self.designation=self.cursor.fetchall()
+        for tup in self.designation:
+            deslist.append(tup[0])
+        cursor.close()
+        db.commit()
+        db.close()
+        deslist.append("No Requirement")
+        #self.deslist=["Add des1 here"," Add des2 here"]
         self.addCourseDesdrop=OptionMenu(self.courseInfoFrame,self.AACDes,*self.deslist)
         self.addCourseDesdrop.grid(row=3,column=1)
 
@@ -1250,11 +1335,26 @@ class CS4400:
         backButton = Button(self.buttonFrame, text = "Back",width = 15, command = self.Back_Add_course)
         backButton.grid(row = 0,column = 0 ,  sticky = E)
         
-        submitButton = Button(self.buttonFrame, text = "Accept",width = 15)#, command =self.submitNewCourse)
+        submitButton = Button(self.buttonFrame, text = "Accept",width = 15, command =self.submitNewCourse)
         submitButton.grid(row = 0,column = 1,  sticky = E)
 
         self.totalAClist=[]
 
+    def submitNewCourse(self):
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "INSERT into Course(Cnum, Cname, Instructor, CnumStud, DesigName) \
+              VALUES(self.newCourseNum, self.newCourseName, self.newInstructor, self.estNumStudents, self.AACDes)"
+        cursor.close()
+        db.commit()
+        db.close()
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        for i in self.totalAClist:
+            sql = "INSERT into Course_Cat(Catname, Cnum)VALUES(i, self.newCourseNum)"
+        cursor.close()
+        db.commit()
+        db.close()
     def Add_Course_Cat(self):
         #print("Adding Course")
 
