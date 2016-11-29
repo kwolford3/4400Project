@@ -1142,6 +1142,7 @@ class CS4400:
         cursor.close()
         db.commit()
         db.close()
+        deptist.append("No Requirement")
         #USE SQL to call list of dept names called self.deptlist
         #self.deptlist=["Add dept1 here"," Add dept2 here", "No Requirement"]
         self.ProjPageDeptdrop=OptionMenu(projInfoFrame2,self.ProjPageDept,*self.deptlist)
@@ -1167,12 +1168,42 @@ class CS4400:
         #Categories
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
-        for n in self.APAClist:
+        self.APAClist.append(self.ProjPageCat.get())
+        print(self.APAClist)
+        for item in self.APAClist:
+            if item != "Please Select":
+                self.FinalApAClist.append(item)
+        print(self.FinalApAClist)
+        for n in self.FinalApAClist:
             sql = "INSERT into Proj_Cat(Pname, Catname) VALUES(self.projName, n)"
+            self.cursor.execute(sql)
         cursor.close()
         db.commit()
         db.close()
-        #NEED TO WORK ON REQUIREMENT TABLE
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        if self.ProjPageMaj != "No Requirement":
+            sql = "INSERT into Requires(Pname, Requirement) VALUES(self.projName, self.ProjPageMaj)"
+            self.cursor.execute(sql)
+        cursor.close()
+        db.commit()
+        db.close()
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        if self.ProjPageYr != "No Requirement":
+            sql = "INSERT into Requires(Pname, Requirement) VALUES(self.projName, self.ProjPageYr)"
+            self.cursor.execute(sql)
+        cursor.close()
+        db.commit()
+        db.close()
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        if self.ProjPageDept != "No Requirement":
+            sql = "INSERT into Requires(Pname, Requirement) VALUES(self.projName, self.ProjPageDept)"
+            self.cursor.execute(sql)
+        cursor.close()
+        db.commit()
+        db.close()
         
 
     def CreateProjAddCat(self):
@@ -1217,11 +1248,7 @@ class CS4400:
 
         if self.ApAcRow-4 >= len(self.catlist3): #-1:
           self.AddProj_AddCatBut.config(state="disabled")
-          self.FinalApAClist=[]
-          for item in self.APAClist:
-              if item != "Please Select":
-                  self.FinalApAClist.append(item)
-          print(self.FinalApAClist)                 
+          self.FinalApAClist=[]  
           return messagebox.showerror("OOps!","You have reached the maximum amount of Categories that can be added")
         
         
