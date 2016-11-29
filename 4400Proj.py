@@ -385,6 +385,19 @@ class CS4400:
         self.ResetBut.grid(row=5,column=4)
 
         #Course Project List
+        #added for scrollbar
+        self.canvas = Canvas(self.Main_pageWin, bg = 'pink')
+        self.canvas.pack(side = RIGHT, fill = BOTH, expand = True)
+        self.CPframe=Frame(self.canvas,bd= 3,bg="black")
+        self.canvas_frame = self.canvas.create_window((0,0),
+            window=self.CPframe, anchor = NW)
+        scroll = Scrollbar(self.canvas, orient = "vertical", 
+            command = self.canvas.yview)
+        scroll.pack(side = RIGHT, fill = Y)
+        self.canvas.config(yscrollcommand = scroll.set)
+        self.CPframe.bind("<Configure>", self.OnFrameConfigure)
+        self.canvas.bind('<Configure>', self.FrameWidth)
+        ##end of scroll
         self.CPframe=Frame(self.Main_pageWin,bd= 3,bg="black")
         self.CPframe.grid(row=6, column=0,columnspan= 5)
         MPCPlab1= Label(self.CPframe, text ="Name", width=70,bg="Light Blue")
@@ -405,7 +418,13 @@ class CS4400:
             self.lab=Label(self.CPframe, text =str(typ), width=20)
             self.lab.grid(row=CPframeCounter,column=1,sticky=W,pady=1)
             CPframeCounter=CPframeCounter+1
-
+    #Next two for scroll bar
+    def FrameWidth(self, event):
+        canvas_width = event.width
+        self.canvas.itemconfig(self.canvas_frame, width = canvas_width)
+    def OnFrameConfigure(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+        
     def view(self,P): #,T):
        # print("View")
         Name = P[0]
