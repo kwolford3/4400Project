@@ -24,6 +24,7 @@ class CS4400:
         self.regisBut.grid(row=2,column=1)
 
     def Login(self):
+        print("login")
         username = self.user.get()
         password =self.passw.get()
         
@@ -42,7 +43,7 @@ class CS4400:
         
         if n == 1: 
  #           messagebox.showerror("Login Successful!","Login Succesful")
- #           print("login successful")
+            print("login successful")
             
             
 	#if student main, if admin choose functionality
@@ -311,13 +312,28 @@ class CS4400:
         db.close()
 
         self.CPlist=self.Plist+self.Clist # NEED A SCROLL BAR!!!!!!!!!!!
-        
+        #print(self.CPlist)
         #called by ME Page
         #also called by a succesfull login page
         self.loginWin.withdraw()
         #self.registerWin.withdraw()
-        self.Main_pageWin = Toplevel()
-        self.Main_pageWin.title("Main Page")
+        self.Main_pageWin1 = Toplevel()
+        self.Main_pageWin1.title("Main Page")
+        #added for scrollbar
+        self.Main_pageWin2 = Canvas(self.Main_pageWin1, bg = 'white')
+        self.Main_pageWin2.pack(side = RIGHT, fill = BOTH, expand = True)
+        print("canvas packed")
+        self.Main_pageWin = Frame(self.Main_pageWin2, bd=3, bg='white')
+        self.canvas_frame = self.Main_pageWin2.create_window((0,0), window=self.Main_pageWin, anchor = NW)
+ 
+        self.Main_pageWin.bind("<Configure>", self.OnFrameConfigure)
+        self.Main_pageWin2.bind('<Configure>', self.FrameWidth)
+        scroll = Scrollbar(self.Main_pageWin2, orient = "vertical", 
+            command = self.Main_pageWin2.yview)
+        scroll.pack(side = RIGHT, fill = Y)
+        self.Main_pageWin2.config(yscrollcommand = scroll.set)
+        #end of scrollbar
+        
         self.mepagebut=Button(self.Main_pageWin, text="ME PAGE", command = self.Me_page)
         self.mepagebut.grid(row=0,column=0)
         MainPageLab1 = Label(self.Main_pageWin, text="Title:")
@@ -383,20 +399,12 @@ class CS4400:
         self.FilterBut.grid(row=5,column=3)
         self.ResetBut =Button(self.Main_pageWin, text="Reset Filter", command = self.Reset_Filter)
         self.ResetBut.grid(row=5,column=4)
-
+ #       self.canvasframe
         #Course Project List
-        #added for scrollbar
-        self.canvas = Canvas(self.Main_pageWin, bg = 'pink')
-        self.canvas.pack(side = RIGHT, fill = BOTH, expand = True)
-        self.CPframe=Frame(self.canvas,bd= 3,bg="black")
-        self.canvas_frame = self.canvas.create_window((0,0),
-            window=self.CPframe, anchor = NW)
-        scroll = Scrollbar(self.canvas, orient = "vertical", 
-            command = self.canvas.yview)
-        scroll.pack(side = RIGHT, fill = Y)
-        self.canvas.config(yscrollcommand = scroll.set)
-        self.CPframe.bind("<Configure>", self.OnFrameConfigure)
-        self.canvas.bind('<Configure>', self.FrameWidth)
+        
+        
+ 
+# 
         ##end of scroll
         self.CPframe=Frame(self.Main_pageWin,bd= 3,bg="black")
         self.CPframe.grid(row=6, column=0,columnspan= 5)
@@ -407,7 +415,7 @@ class CS4400:
         
         #pull al list of all courses anf projects here will need SQL
         CPframeCounter=1
-               
+        print("we are here")              
         #self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Project Q","Project")]
         for tup in self.CPlist:
             Name=tup[0]
@@ -418,12 +426,7 @@ class CS4400:
             self.lab=Label(self.CPframe, text =str(typ), width=20)
             self.lab.grid(row=CPframeCounter,column=1,sticky=W,pady=1)
             CPframeCounter=CPframeCounter+1
-    #Next two for scroll bar
-    def FrameWidth(self, event):
-        canvas_width = event.width
-        self.canvas.itemconfig(self.canvas_frame, width = canvas_width)
-    def OnFrameConfigure(self, event):
-        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
+    
         
     def view(self,P): #,T):
        # print("View")
@@ -501,7 +504,7 @@ class CS4400:
 
         #creating the View Project window and hiding the Main Page window
         self.viewProjWin = Toplevel()
-        self.Main_pageWin.withdraw()
+        self.Main_pageWin1.withdraw()
         self.viewProjWin.title("View Project: "+str(select))
         
         #creating lefthand side labels (NO SQL) and buttons within View Project window
@@ -549,7 +552,7 @@ class CS4400:
         
     def Reset_Filter(self):
         print("Reset Filter")
-        self.Main_pageWin.destroy()
+        self.Main_pageWin1.destroy()
         self.Main_page()
         
     def Add_Cat_MainPage(self):
@@ -580,11 +583,28 @@ class CS4400:
           return messagebox.showerror("OOps!","You have reached the maximum amount of Categories that can be added")
             
         
-        self.Main_pageWin.destroy()
+        self.Main_pageWin1.destroy()
  
         
-        self.Main_pageWin = Toplevel()
-        self.Main_pageWin.title("Main Page")
+ #       self.Main_pageWin = Toplevel()
+#        self.Main_pageWin.title("Main Page")
+
+        self.Main_pageWin1 = Toplevel()
+        self.Main_pageWin1.title("Main Page")
+        #added for scrollbar
+        self.Main_pageWin2 = Canvas(self.Main_pageWin1, bg = 'white')
+        self.Main_pageWin2.pack(side = RIGHT, fill = BOTH, expand = True)
+        print("canvas packed")
+        self.Main_pageWin = Frame(self.Main_pageWin2, bd=3, bg='white')
+        self.canvas_frame = self.Main_pageWin2.create_window((0,0), window=self.Main_pageWin, anchor = NW)
+ 
+        self.Main_pageWin.bind("<Configure>", self.OnFrameConfigure)
+        self.Main_pageWin2.bind('<Configure>', self.FrameWidth)
+        scroll = Scrollbar(self.Main_pageWin2, orient = "vertical", 
+            command = self.Main_pageWin2.yview)
+        scroll.pack(side = RIGHT, fill = Y)
+        self.Main_pageWin2.config(yscrollcommand = scroll.set)
+        
 
         self.mepagebut=Button(self.Main_pageWin, text="ME PAGE", command = self.Me_page)
         self.mepagebut.grid(row=0,column=0)
@@ -810,7 +830,7 @@ class CS4400:
         #needs to be withdraw by previous pages
        # print ("view course page")
         self.ViewCourseWin=Toplevel()
-        self.Main_pageWin.withdraw()
+        self.Main_pageWin1.withdraw()
         
         self.ViewCourseWin.title("View Course: "+str(select))
         #will be called from selections based on sql and main page
@@ -1064,16 +1084,19 @@ class CS4400:
         self.ProjPageCat.set("Please Select")
         #USE SQL to call list of cat names called self.catlist
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
+        self.cursor = db.cursor()
         sql = "SELECT Catname from Category"
         self.cursor.execute(sql)
         self.categories=self.cursor.fetchall()
+        self.catlist3=[]
         for tup in self.categories:
-            catlist3.append(tup[0])
-        cursor.close()
+            self.catlist3.append(tup[0])
+       # print(catlist)
+        self.cursor.close()
         db.commit()
         db.close()
-        catlist3.append("No Requirement")
+        self.catlist3.append("No Requirement")
+        #print(catlist3)
         #self.catlist3=["Add cat1 here"," Add cat2 here", "No Requirement"]
 
         ########
@@ -1107,37 +1130,39 @@ class CS4400:
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql = "SELECT DesigName from Desig"
-        self.cursor.execute(sql)
-        self.designation=self.cursor.fetchall()
+        cursor.execute(sql)
+        self.designation=cursor.fetchall()
+        self.deslist=[]
         for tup in self.designation:
-            deslist.append(tup[0])
+            self.deslist.append(tup[0])
         cursor.close()
         db.commit()
         db.close()
-        deslist.append("No Requirement")
+        self.deslist.append("No Requirement")
         #USE SQL to call list of des names called self.deslist
         #self.deslist=["Add des1 here"," Add des2 here", "No Requirement"]
         self.ProjPageDesdrop=OptionMenu(projInfoFrame2,self.ProjPageDes,*self.deslist)
         self.ProjPageDesdrop.grid(row=0,column=1)
         
         # EWstimated NUmber of Students
-        self.estNum = StringVar()
+        self.estNum = IntVar()
         estNumEnt = Entry(projInfoFrame2, width =30, textvariable = self.estNum)
         estNumEnt.grid(row=1, column=1)
         #MAJOR
         self.ProjPageMaj=StringVar()
         self.ProjPageMaj.set("Please Select")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
+        self.cursor = db.cursor()
         sql = "SELECT Mname from Major"
         self.cursor.execute(sql)
         self.majors=self.cursor.fetchall()
+        self.majlist=[]
         for tup in self.majors:
-            majlist.append(tup[0])
-        cursor.close()
+            self.majlist.append(tup[0])
+        self.cursor.close()
         db.commit()
         db.close()
-        majlist.append("No Requirement")
+        self.majlist.append("No Requirement")
         #USE SQL to call list of major names called self.majlist
         #self.majlist=["Add maj1 here"," Add maj2 here", "No Requirement"]
         self.ProjPageMajdrop=OptionMenu(projInfoFrame2,self.ProjPageMaj,*self.majlist)
@@ -1152,16 +1177,17 @@ class CS4400:
         self.ProjPageDept=StringVar()
         self.ProjPageDept.set("Please Select")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
+        self.cursor = db.cursor()
         sql = "SELECT Dname from Department"
         self.cursor.execute(sql)
         self.departments=self.cursor.fetchall()
+        self.deptlist=[]
         for tup in self.departments:
-            deptlist.append(tup[0])
-        cursor.close()
+            self.deptlist.append(tup[0])
+        self.cursor.close()
         db.commit()
         db.close()
-        deptist.append("No Requirement")
+        self.deptlist.append("No Requirement")
         #USE SQL to call list of dept names called self.deptlist
         #self.deptlist=["Add dept1 here"," Add dept2 here", "No Requirement"]
         self.ProjPageDeptdrop=OptionMenu(projInfoFrame2,self.ProjPageDept,*self.deptlist)
@@ -1176,54 +1202,66 @@ class CS4400:
         self.APAClist =[]
 
     def submitNewProject(self):
+        # need to check that all fields are filled out (will need to use get finction)
+        # need to check that thype of number of students is an interger
+        #need to pput all of this in a try an except
+        #chekc that nothing is == to "please select"
+        # if any of these fail RETURN an error message box
+        
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
-        sql = "INSERT into Project(Pname, Num_Students, Aname, Aemail, Description, DesigName) \
-               VALUES(self.projName, self.estNum, self.advisor, self.advisorEm, self.descript, self.ProjPageDes)"
-        self.cursor.execute(sql)
-        cursor.close()
+        self.cursor = db.cursor()
+        sql = "INSERT into Project (Pname, Num_Students, Aname, Aemail, Description, DesigName) VALUES(%s,%s,%s,%s,%s,%s)"
+        self.cursor.execute(sql,(self.projName.get(), self.estNum.get(), self.advisor.get(), self.advisorEm.get(), self.descript.get(), self.ProjPageDes.get()))
+        #print("here we are")
+        self.cursor.close()
         db.commit()
         db.close()
+        print("project added")
         #Categories
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
-        self.APAClist.append(self.ProjPageCat.get())
-        print(self.APAClist)
+        self.cursor = db.cursor()
+        self.APAClist.append(self.ProjPageCat1.get())
+        self.FinalApAClist=[]
+        #print(self.APAClist)
         for item in self.APAClist:
             if item != "Please Select":
-                self.FinalApAClist.append(item)
+                if item not in self.FinalApAClist:
+                    self.FinalApAClist.append(item)
         print(self.FinalApAClist)
         for n in self.FinalApAClist:
-            sql = "INSERT into Proj_Cat(Pname, Catname) VALUES(self.projName, n)"
-            self.cursor.execute(sql)
-        cursor.close()
+            sql = "INSERT into Proj_Cat(Pname, Catname) VALUES(%s,%s)"
+            self.cursor.execute(sql,(self.projName.get(), n))
+        self.cursor.close()
         db.commit()
         db.close()
+        print("proj cat added")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
-        if self.ProjPageMaj != "No Requirement":
-            sql = "INSERT into Requires(Pname, Requirement) VALUES(self.projName, self.ProjPageMaj)"
-            self.cursor.execute(sql)
-        cursor.close()
+        self.cursor = db.cursor()
+        if self.ProjPageMaj.get() != "No Requirement":
+            sql = "INSERT into Requires(Pname, Requirement) VALUES(%s,%s)"
+            self.cursor.execute(sql,(self.projName.get(), self.ProjPageMaj.get()))
+        self.cursor.close()
         db.commit()
         db.close()
+        print("requires added")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
-        if self.ProjPageYr != "No Requirement":
-            sql = "INSERT into Requires(Pname, Requirement) VALUES(self.projName, self.ProjPageYr)"
-            self.cursor.execute(sql)
-        cursor.close()
+        self.cursor = db.cursor()
+        if self.ProjPageYr.get() != "No Requirement":
+            sql = "INSERT into Requires(Pname, Requirement) VALUES(%s,%s)"
+            self.cursor.execute(sql,(self.projName.get(), self.ProjPageYr.get()))
+        self.cursor.close()
         db.commit()
         db.close()
+        print("proj cat added")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
-        if self.ProjPageDept != "No Requirement":
-            sql = "INSERT into Requires(Pname, Requirement) VALUES(self.projName, self.ProjPageDept)"
-            self.cursor.execute(sql)
-        cursor.close()
+        self.cursor = db.cursor()
+        if self.ProjPageDept.get() != "No Requirement":
+            sql = "INSERT into Requires(Pname, Requirement) VALUES(%s,%s)"
+            self.cursor.execute(sql,(self.projName.get(), self.ProjPageDept.get()))
+        self.cursor.close()
         db.commit()
         db.close()
-        
+        print("requires added")
 
     def CreateProjAddCat(self):
         #print("adding a cat for adding a project")
@@ -1472,7 +1510,12 @@ class CS4400:
                   self.FinalACCatlist.append(item)
           print(self.FinalACCatlist)                 
           return messagebox.showerror("OOps!","You have reached the maximum amount of Categories that can be added")
-
+#Next two for scroll bar
+    def FrameWidth(self, event):
+        canvas_width = event.width
+        self.Main_pageWin2.itemconfig(self.canvas_frame, width = canvas_width)
+    def OnFrameConfigure(self, event):
+        self.Main_pageWin2.configure(scrollregion=self.Main_pageWin2.bbox("all"))
     
     
 
