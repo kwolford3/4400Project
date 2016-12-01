@@ -1141,7 +1141,6 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        self.catlist3.append("No Requirement")
         #print(catlist3)
         #self.catlist3=["Add cat1 here"," Add cat2 here", "No Requirement"]
 
@@ -1184,7 +1183,6 @@ class CS4400:
         cursor.close()
         db.commit()
         db.close()
-        self.deslist.append("No Requirement")
         #USE SQL to call list of des names called self.deslist
         #self.deslist=["Add des1 here"," Add des2 here", "No Requirement"]
         self.ProjPageDesdrop=OptionMenu(projInfoFrame2,self.ProjPageDes,*self.deslist)
@@ -1428,7 +1426,6 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        catlist1.append("No Requirement")
         #self.catlist1=["cat1","cat 2", "cat 3", "cat 4"]
         self.AddCC =OptionMenu(self.courseInfoFrame, self.AddCourseCat, *self.catlist1)
         self.AddCC.grid(row=4, column =1)
@@ -1454,7 +1451,6 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        deslist.append("No Requirement")
         #self.deslist=["Add des1 here"," Add des2 here"]
         self.addCourseDesdrop=OptionMenu(self.courseInfoFrame,self.AACDes,*self.deslist)
         self.addCourseDesdrop.grid(row=3,column=1)
