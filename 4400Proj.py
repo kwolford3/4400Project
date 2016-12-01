@@ -26,7 +26,6 @@ class CS4400:
         self.regisBut.grid(row=2,column=1)
 
     def Login(self):
-        print("login")
         username = self.user.get()
         password =self.passw.get()
         
@@ -1409,7 +1408,7 @@ class CS4400:
         newInstructorEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.newInstructor)
         newInstructorEnt.grid(row=2, column =1)
 
-        self.estNumStudents = StringVar()
+        self.estNumStudents = IntVar()
         self.estNumStudentsEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.estNumStudents)
         self.estNumStudentsEnt.grid(row=5, column =1)
 
@@ -1420,13 +1419,12 @@ class CS4400:
         sql = "SELECT Catname from Category"
         self.cursor.execute(sql)
         self.categories=self.cursor.fetchall()
-        catlist1 =[]
+        self.catlist1 =[]
         for tup in self.categories:
-            catlist1.append(tup[0])
+            self.catlist1.append(tup[0])
         self.cursor.close()
         db.commit()
         db.close()
-        #self.catlist1=["cat1","cat 2", "cat 3", "cat 4"]
         self.AddCC =OptionMenu(self.courseInfoFrame, self.AddCourseCat, *self.catlist1)
         self.AddCC.grid(row=4, column =1)
         self.ACrow=4
@@ -1446,13 +1444,14 @@ class CS4400:
         sql = "SELECT DesigName from Desig"
         self.cursor.execute(sql)
         self.designation=self.cursor.fetchall()
+        deslist=[]
         for tup in self.designation:
             deslist.append(tup[0])
         self.cursor.close()
         db.commit()
         db.close()
         #self.deslist=["Add des1 here"," Add des2 here"]
-        self.addCourseDesdrop=OptionMenu(self.courseInfoFrame,self.AACDes,*self.deslist)
+        self.addCourseDesdrop=OptionMenu(self.courseInfoFrame,self.AACDes,*deslist)
         self.addCourseDesdrop.grid(row=3,column=1)
 
         #Put Buttons in Frame
@@ -1466,22 +1465,35 @@ class CS4400:
         submitButton.grid(row = 0,column = 1,  sticky = E)
 
         self.totalAClist=[]
+        self.totalAClist.append(self.AddCourseCat.get())
 
     def submitNewCourse(self):
+        print("submitting course")
+        self.FinalCClist=[]
+        #print(self.APAClist)
+        for item in self.totalAClist:
+            if item != "Please Select":
+                if item not in self.FinalCClist:
+                    self.FinalCClist.append(item)
+        print(self.FinalCClist)
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
         sql = "INSERT into Course(Cnum, Cname, Instructor, CnumStud, DesigName) \
-              VALUES(self.newCourseNum.get(), self.newCourseName.get(), self.newInstructor.get(), self.estNumStudents.get(), self.AACDes.get())"
+              VALUES(%s, %s, %s, %s, %s)"
+        self.cursor.execute(sql, (self.newCourseNum.get(), self.newCourseName.get(), self.newInstructor.get(), self.estNumStudents.get(), self.AACDes.get()))
         self.cursor.close()
         db.commit()
         db.close()
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
-        for i in self.totalAClist:
-            sql = "INSERT into Course_Cat(Catname, Cnum)VALUES(i, self.newCourseNum.get())"
+        for i in self.FinalCClist:
+            sql = "INSERT into Course_Cat(Catname, Cnum)VALUES(%s, %s)"
+            self.cursor.execute(sql, (i, self.newCourseNum.get()))
+                                
         self.cursor.close()
         db.commit()
         db.close()
+        print("got to the end")
     def Add_Course_Cat(self):
         #print("Adding Course")
 
