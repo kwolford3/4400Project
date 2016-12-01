@@ -807,9 +807,26 @@ class CS4400:
         MyALab2.grid(row = 0, column=1,padx = 5, pady=5 )
         MyALab3 =Label(f, text="Status",width = 20, bg= "Light Blue")
         MyALab3.grid(row = 0, column=2,padx = 5, pady=5)
-        self.MyAppList=[("10/11/12","Project A","Pending"),("1/11/16","Project 9","Accepted"),("12/12/95","Project 9","Rejected")]
+        username = self.user.get()
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        self.cursor = db.cursor()
+        sql="SELECT Student.GtEmail from Student where UserName = %s"
+        self.cursor.execute(sql,(username))
+        self.email=self.cursor.fetchall()
+        self.cursor.close()
+        db.commit()
+        db.close()
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        self.cursor = db.cursor()
+        sql= "SELECT a.Date, a.Pname, a.Status from Application where GtEmail=%s"
+        self.cursor.execute(sql,(email))
+        self.projects=self.cursor.fetchall()
+        self.cursor.close()
+        db.commit()
+        db.close()            
+        #self.MyAppList=[("10/11/12","Project A","Pending"),("1/11/16","Project 9","Accepted"),("12/12/95","Project 9","Rejected")]
         MyAppCounter= 1
-        for tup in self.MyAppList:
+        for tup in self.projects:
             date= tup[0]
             name=tup[1]
             status=tup[2]
@@ -1404,6 +1421,7 @@ class CS4400:
         sql = "SELECT Catname from Category"
         self.cursor.execute(sql)
         self.categories=self.cursor.fetchall()
+        catlist1 =[]
         for tup in self.categories:
             catlist1.append(tup[0])
         self.cursor.close()
