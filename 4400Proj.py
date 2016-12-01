@@ -3,6 +3,8 @@ import pymysql
 import os
 from re import findall
 
+
+#Check for scrollbar needs: Popular Projects and Application Report
 class CS4400:
 #Login Page done
     def __init__(self,win):
@@ -1000,8 +1002,28 @@ class CS4400:
         self.applicationReportWin.title("Application Report")
 
         #totalFrame + label
-        totalInfoF = Frame(self.applicationReportWin)
+        #totalInfoF = Frame(self.applicationReportWin)
+        #totalInfoF.grid(row = 0, column = 0, columnspan = 6)
+
+        #added for scrollbar
+        self.canvas = Canvas(self.applicationReportWin, bg = 'white')
+        self.canvas.pack(side = RIGHT, fill = BOTH, expand = True)
+        print("canvas packed")
+        #totalFrame + label
+        totalInfoF = Frame(self.canvas)
         totalInfoF.grid(row = 0, column = 0, columnspan = 6)
+        self.projectInfoF = Frame(self.canvas,bd= 3,bg="black")
+        self.projectInfoF.grid(row = 1, column = 0, columnspan = 6)
+        self.canvas_frame = self.canvas.create_window((0,0), window=self.totalInfoF, anchor = NW)
+        self.canvas_frame = self.canvas.create_window((0,-1), window=self.projectInfoF, anchor = NW)
+ 
+        self.totalInfoF.bind("<Configure>", self.OnFrameConfigure)
+        self.canvas.bind('<Configure>', self.FrameWidth)
+        scroll = Scrollbar(self.canvas, orient = "vertical", 
+            command = self.canvas.yview)
+        scroll.pack(side = RIGHT, fill = Y)
+        self.canvas.config(yscrollcommand = scroll.set)
+        #end of scrollbar
 
  #      self.totApps = SQL query to get the application total
  #      self.totApps = SQL query to get total of accepted applications 
@@ -1009,8 +1031,8 @@ class CS4400:
         totAppLab.grid(row =0, column = 0) 
 
         #projectInfo Frame
-        self.projectInfoF = Frame(self.applicationReportWin,bd= 3,bg="black")
-        self.projectInfoF.grid(row = 1, column = 0, columnspan = 6)
+        #self.projectInfoF = Frame(self.applicationReportWin,bd= 3,bg="black")
+        #self.projectInfoF.grid(row = 1, column = 0, columnspan = 6)
 
         projectLab = Label(self.projectInfoF, text="Project",width=20,bg="Light Blue")
         projectLab.grid(row =0, column = 0, sticky=W,padx=3,pady=1)
@@ -1378,13 +1400,13 @@ class CS4400:
         self.AddCourseCat = StringVar()
         self.AddCourseCat.set("Please Select")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
+        self.cursor = db.cursor()
         sql = "SELECT Catname from Category"
         self.cursor.execute(sql)
         self.categories=self.cursor.fetchall()
         for tup in self.categories:
             catlist1.append(tup[0])
-        cursor.close()
+        self.cursor.close()
         db.commit()
         db.close()
         catlist1.append("No Requirement")
@@ -1404,13 +1426,13 @@ class CS4400:
         self.AACDes=StringVar()
         self.AACDes.set("Please Select")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
+        self.cursor = db.cursor()
         sql = "SELECT DesigName from Desig"
         self.cursor.execute(sql)
         self.designation=self.cursor.fetchall()
         for tup in self.designation:
             deslist.append(tup[0])
-        cursor.close()
+        self.cursor.close()
         db.commit()
         db.close()
         deslist.append("No Requirement")
@@ -1432,17 +1454,17 @@ class CS4400:
 
     def submitNewCourse(self):
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
+        self.cursor = db.cursor()
         sql = "INSERT into Course(Cnum, Cname, Instructor, CnumStud, DesigName) \
-              VALUES(self.newCourseNum, self.newCourseName, self.newInstructor, self.estNumStudents, self.AACDes)"
-        cursor.close()
+              VALUES(self.newCourseNum.get(), self.newCourseName.get(), self.newInstructor.get(), self.estNumStudents.get(), self.AACDes.get())"
+        self.cursor.close()
         db.commit()
         db.close()
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
-        cursor = db.cursor()
+        self.cursor = db.cursor()
         for i in self.totalAClist:
-            sql = "INSERT into Course_Cat(Catname, Cnum)VALUES(i, self.newCourseNum)"
-        cursor.close()
+            sql = "INSERT into Course_Cat(Catname, Cnum)VALUES(i, self.newCourseNum.get())"
+        self.cursor.close()
         db.commit()
         db.close()
     def Add_Course_Cat(self):
