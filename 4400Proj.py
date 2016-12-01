@@ -340,6 +340,7 @@ class CS4400:
             command = self.Main_pageWin2.yview)
         scroll.pack(side = RIGHT, fill = Y)
         self.Main_pageWin2.config(yscrollcommand = scroll.set)
+        self.Main_pageWin2.config(width=800, height=600)
         #end of scrollbar
         
         self.mepagebut=Button(self.Main_pageWin, text="ME PAGE", command = self.Me_page)
