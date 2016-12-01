@@ -116,7 +116,13 @@ class CS4400:
 
         #pull most pop project and # of applicants using SQL
         popProjectframeCounter=1
-        self.projMajYearStatlist =[("Project A","34"),("Project B","55"),("Project C","67"),("Project F","69")]
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Pname, Count(Pname) FROM Application GROUP BY Pname ORDER BY Count(Pname) DESC LIMIT 10;"
+        cursor.execute(sql)
+        self.projMajYearStatlist=cursor.fetchall()
+        print(self.projMajYearStatlist)
+        #self.projMajYearStatlist =[("Project A","34"),("Project B","55"),("Project C","67"),("Project F","69")]
         for tup in self.projMajYearStatlist:
             projectName=tup[0]
             numApplicants=tup[1]
