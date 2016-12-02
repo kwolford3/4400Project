@@ -1,5 +1,6 @@
 from tkinter import *
 import pymysql
+import datetime
 import os
 from re import findall
 
@@ -461,7 +462,8 @@ class CS4400:
 
 
 
-    def View_Project(self,select):
+        def View_Project(self,select):
+        self.projname = select
         #called by Main_page (by selecting a project)
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
@@ -530,7 +532,7 @@ class CS4400:
         numStudLab.grid(row=6,column=0)
         self.backBut= Button(self.viewProjWin, text="Back",command=self.Back_View_Project)
         self.backBut.grid(row=7,column=0)
-        self.applyBut = Button(self.viewProjWin, text="Apply")
+        self.applyBut = Button(self.viewProjWin, text="Apply",command=self.Apply_Button)
         self.applyBut.grid(row=7,column=1)
 
         #creating title and righthand side labels (SQL INCLUDED/NEEDED)
@@ -549,6 +551,32 @@ class CS4400:
         self.SQLrequire.grid(row=5,column=1)
         self.SQLnumStud = Label(self.viewProjWin, text=str(self.projinfo[0][5]))
         self.SQLnumStud.grid(row=6,column=1)
+
+
+    def Apply_Button(self):
+        print("applied")
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        #username
+        proj_name = self.projname
+        print(proj_name)
+        username = self.user.get()
+        print(username)
+        sql_email = "SELECT GtEmail FROM Student WHERE UserName = %s;"
+        cursor.execute(sql_email, (username))
+        db.commit()
+        emails = cursor.fetchall()
+        email = emails[0][0]
+        cursor.close()
+        print(email)
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql_insert = "INSERT INTO Application(Date,Pname,GtEmail) VALUES (%s,%s,%s);"
+        date = datetime.datetime.now()
+        cursor.execute(sql_insert,("%s-%s-%s" %(date.year,date.month,date.day),proj_name,email))
+        db.commit()
+        cursor.close()
+        print("insert complete")
 
 
 
