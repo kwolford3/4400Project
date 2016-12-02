@@ -1189,7 +1189,7 @@ class CS4400:
         
         # EWstimated NUmber of Students
         self.estNumStud = IntVar()
-        estNumEnt = Entry(projInfoFrame2, width =30, textvariable = self.estNum)
+        estNumEnt = Entry(projInfoFrame2, width =30, textvariable = self.estNumStud)
         estNumEnt.grid(row=1, column=1)
         #MAJOR
         self.ProjPageMaj=StringVar()
