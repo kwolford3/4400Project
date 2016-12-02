@@ -461,8 +461,7 @@ class CS4400:
  #       will need to check if selected button is a course or a project and then run the respective view course or view project button below
 
 
-
-        def View_Project(self,select):
+    def View_Project(self,select):
         self.projname = select
         #called by Main_page (by selecting a project)
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
