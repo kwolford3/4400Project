@@ -1032,7 +1032,7 @@ class CS4400:
         #called by
         print ("view project page")
 
-   def View_course(self,select):
+    def View_course(self,select):
        
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
