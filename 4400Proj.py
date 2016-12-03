@@ -843,10 +843,11 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
+        #print(self.email[0])
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
-        sql= "SELECT a.Date, a.Pname, a.Status from Application where GtEmail=%s"
-        self.cursor.execute(sql,(email))
+        sql= "SELECT a.Date, a.Pname, a.Status from Application a where GtEmail=%s"
+        self.cursor.execute(sql,(self.email[0]))
         self.projects=self.cursor.fetchall()
         self.cursor.close()
         db.commit()
