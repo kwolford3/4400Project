@@ -663,7 +663,7 @@ class CS4400:
      
         MainPageLabDes = Label(self.Main_pageWin,text="Designation:")
         MainPageLabDes.grid(row=2,column=0)
-        self.MainPageYear.set(self.MainPageYear.get())
+        self.MainPageDes.set(self.MainPageDes.get())
         self.MainPageDesdrop=OptionMenu(self.Main_pageWin,self.MainPageDes,*self.deslist)
         self.MainPageDesdrop.grid(row=2,column=1)
 
