@@ -608,10 +608,136 @@ class CS4400:
 
 
     def Apply_Filter(self):
-        print("apply filter")
-        # if  row number == to 0 (or initial valu) will need to get the value of categor
-        # if row number greater than zero but les than the maximum number of categories will need to get the last selected category
-        #and add it to the final list of categories being looked at 
+       # SEARCHIN IS CASE SENSITIVE!!!!
+       # print("apply filter")
+        thelist=[]
+        final =[]
+ #       print(self.MainPageRow)
+        if self. MainPageRow == 0:
+            thelist.append(self.MainPageCat.get())
+        else:
+            self.CatTempList.append(self.MainPageCat1.get())
+            thelist = thelist+self.CatTempList
+        for cat in thelist:
+            if cat not in final and cat != "Please Select":
+                final.append(cat)
+
+        title = self.MPEntry.get()
+        year = self.MainPageYear.get() # requirement
+        if year == "Please Select":
+            year=""
+        major= self.MainPageMaj.get() # requirement
+        if major == "Please Select":
+            major=""
+        des= self.MainPageDes.get()
+        if des == "Please Select":
+            des =""
+        rb = self.MainPageRB.get()
+        if rb == "":
+            rb="Both"
+        #print(title, year, major, des,rb, final)
+        if major != "":
+            sql = "SELECT m.Dname FROM `Major` m WHERE m.Mname=%s"
+            db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+            cursor = db.cursor()
+            cursor.execute(sql,(major))
+            self.dept=cursor.fetchall()
+            cursor.close()
+            db.commit()
+            db.close()
+            #print(self.dept)
+            dept = self.dept[0][0]
+            #print(dept)
+
+        else:
+            dept = ""
+        #print(title, year, major, des,rb, final)
+
+        updated=[]
+        updated1=[]
+        winner =[]
+
+        if rb== "Project" or rb =="Both":
+            #print("running fo project and both")
+       
+            sql = "SELECT p.Pname, p.DesigName, c.Catname, r.requirement from Project p Left JOIN Proj_Cat c on p.Pname = c.Pname Left JOIN Requires r on r.Pname = p.Pname"
+            db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+            cursor = db.cursor()
+            cursor.execute(sql)
+            self.projstat=cursor.fetchall()
+            cursor.close()
+            db.commit()
+            db.close()
+           
+            
+            for ntup in self.projstat:
+                if ntup[0]==title or title== "":
+                    if ntup[1]==des or des== "":
+                        if ntup[2] in final or final == []:
+                            if ntup[3] == year or ntup[3] == major or ntup[3] == dept or ntup[3]== None or (major == "" and year ==""): # what if there is no major or yer listed
+                                updated.append(ntup)
+            #print(updated)
+                                
+            for item in updated:
+                if (item[0],"Project") not in winner:
+                    winner.append((item[0],"Project"))
+
+            #print(winner)
+            
+
+                
+        if rb=="Course" or rb =="Both":
+            sql = "SELECT c.Cname, c.DesigName, z.Catname from Course c Left JOIN Course_Cat z on z.Cnum = c.Cnum"
+            db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+            cursor = db.cursor()
+            cursor.execute(sql)
+            self.coursestat=cursor.fetchall()
+            cursor.close()
+            db.commit()
+            db.close()
+           
+            
+            for ntup in self.coursestat:
+                if ntup[0]==title or title== "":
+                    if ntup[1]==des or des== "":
+                        if ntup[2] in final or final == []:
+#                            if ntup[3] == year or ntup[3] == major or ntup[3] == dept or ntup[3]== None or (major == "" and year ==""): # what if there is no major or yer listed
+                                updated1.append(ntup)
+           # print("here:  ", updated1)
+
+            for item in updated1:
+                if (item[0],"Course") not in winner:
+                    winner.append((item[0],"Course"))
+
+            #print(winner)
+
+        
+
+        #Course Project List
+        self.CPframe.destroy()   
+        self.CPframe=Frame(self.Main_pageWin,bd= 3,bg="black")
+        self.CPframe.grid(row=self.MainPageRow+6, column=0,columnspan= 5)
+        MPCPlab1= Label(self.CPframe, text ="Name", width=70,bg="Light Blue")
+        MPCPlab1.grid(row=0,column=0,sticky=W,padx=3,pady=1)
+        MPCPlab2= Label(self.CPframe, text ="Type",width=20,bg="Light Blue")
+        MPCPlab2.grid(row=0,column=1,sticky=W,pady=1)
+        #pull al list of all courses anf projects here will need SQL
+        CPframeCounter=1
+        for tup in winner:
+            Name=tup[0]
+            typ=tup[1]
+            pair=(Name,typ)
+            
+            self.SelectBut=Button(self.CPframe, text =str(Name), width=70, command = lambda pair= pair: self.view(pair))
+            self.SelectBut.grid(row=CPframeCounter,column=0,sticky=W,padx=3,pady=1)
+            self.lab=Label(self.CPframe, text =str(typ), width=20)
+            self.lab.grid(row=CPframeCounter,column=1,sticky=W,pady=1)
+            CPframeCounter=CPframeCounter+1
+
+
+        if winner == []:
+            text = "There are No Matches to your search, Please Note: Title is CASE SENSITIVE "
+            return messagebox.showerror("OOPS",text)
         
     def Reset_Filter(self):
         print("Reset Filter")
