@@ -602,7 +602,7 @@ class CS4400:
         cursor.execute(sql_insert,("%s-%s-%s" %(date.year,date.month,date.day),proj_name,email))
         db.commit()
         cursor.close()
-        messagebox.showinfo("Sucess","You have applied to %s" %(proj_name))
+        messagebox.showinfo("Success","You have applied to %s" %(proj_name))
         print("insert complete")
 
 
