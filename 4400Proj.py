@@ -738,7 +738,7 @@ class CS4400:
         #called by
         #Creates ME window
         #destroy previous window
-        self.Main_pageWin.withdraw()
+        self.Main_pageWin1.withdraw()
         #print("me page running")
         self.meWin = Toplevel()
         self.meWin.title("ME")
