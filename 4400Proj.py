@@ -556,18 +556,45 @@ class CS4400:
         print("applied")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
-        #username
         proj_name = self.projname
-        print(proj_name)
+        print("Applying to: ",proj_name)
         username = self.user.get()
-        print(username)
-        sql_email = "SELECT GtEmail FROM Student WHERE UserName = %s;"
+        print("User is: ",username)
+        sql_email = "SELECT Year,GtEmail,Mname FROM Student WHERE UserName = %s;"
         cursor.execute(sql_email, (username))
         db.commit()
-        emails = cursor.fetchall()
-        email = emails[0][0]
+        info = cursor.fetchall()
+        year = info[0][0]
+        email = info[0][1]
+        major = info[0][2]
         cursor.close()
-        print(email)
+        print("User's year is: ",year)
+        print("User's email is: ",email)
+        print("User's major is: ",major)
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql_dept = "SELECT Dname FROM Major WHERE Mname = %s;"
+        cursor.execute(sql_dept, (major))
+        depts = cursor.fetchall()
+        dept = depts[0][0]
+        student_info = [year,major,dept]
+        print("Dept of User's major is: ",dept)
+        cursor.close()
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql_require = "SELECT Requirement FROM Requires WHERE Pname = %s;"
+        cursor.execute(sql_require, (proj_name))
+        requirements = cursor.fetchall()
+        print(requirements)
+        for req in requirements:
+            if req[0] == "":
+                pass
+            else:
+                if req[0] in student_info:
+                    pass
+                else:
+                    messagebox.showerror("Requirement Needed","Sorry, you don't meet the requirements for this project.")
+                    return("Done")        
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql_insert = "INSERT INTO Application(Date,Pname,GtEmail) VALUES (%s,%s,%s);"
@@ -575,6 +602,7 @@ class CS4400:
         cursor.execute(sql_insert,("%s-%s-%s" %(date.year,date.month,date.day),proj_name,email))
         db.commit()
         cursor.close()
+        messagebox.showinfo("Sucess","You have applied to %s" %(proj_name))
         print("insert complete")
 
 
