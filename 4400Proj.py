@@ -878,16 +878,44 @@ class CS4400:
         #called by
         print ("view project page")
 
-    def View_course(self,select):
-        #called by some function that has not been created yet? has no call right now
-        #needs to be withdraw by previous pages
-       # print ("view course page")
+   def View_course(self,select):
+       
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT c.Instructor, c.CnumStud, c.DesigName, z.Catname from Course c Left JOIN Course_Cat z on z.Cnum = c.Cnum where c.Cname=%s"
+        cursor.execute(sql,(select))
+        self.courseListinfo=cursor.fetchall()
+        cursor.close()
+        db.commit()
+        db.close()
+       
+        count1 =0
+        print(self.courseListinfo)
+        # need to check if a course must have a category associated with it
+       
+        cat = ""
+        #if self.courseListinfo[0][
+        if self.courseListinfo[0][3] == None:
+            cat = "None"
+        else:
+            for item in self.courseListinfo:
+                count1=count1+1
+            
+                if count1 == 1:
+                    if item[3] not in cat:
+                        cat =cat+item[3]
+                
+                else:
+                    if item[3] not in cat:
+                        cat=cat+", "+item[3]
+                
+                
         self.ViewCourseWin=Toplevel()
         self.Main_pageWin1.withdraw()
         
         self.ViewCourseWin.title("View Course: "+str(select))
         #will be called from selections based on sql and main page
-        self.courseListinfo=("Example Course Name","Example Instructor","Example Designation", "Example Cat", "##")
+        #self.courseListinfo=("Example Course Name","Example Instructor","Example Designation", "Example Cat", "##")
         
         VCLab1 =Label(self.ViewCourseWin, text="Course Name:",bg="Light Blue")
         VCLab1.grid(row = 0, column=0,padx = 5, pady=5 )
@@ -896,22 +924,22 @@ class CS4400:
         
         VCLab1 =Label(self.ViewCourseWin, text="Instructor:",bg="Light Blue")
         VCLab1.grid(row = 1, column=0,padx = 5, pady=5 )
-        VCInst =Label(self.ViewCourseWin, text=self.courseListinfo[1])
+        VCInst =Label(self.ViewCourseWin, text=self.courseListinfo[0][0])
         VCInst.grid(row = 1, column=1,padx = 5, pady=5 )
         
         VCLab2 =Label(self.ViewCourseWin, text="Designation:",bg="Light Blue")
         VCLab2.grid(row = 2, column=0,padx = 5, pady=5 )
-        VCDes =Label(self.ViewCourseWin, text=self.courseListinfo[2])
+        VCDes =Label(self.ViewCourseWin, text=self.courseListinfo[0][2])
         VCDes.grid(row = 2, column=1,padx = 5, pady=5 )
 
         VCLab3 =Label(self.ViewCourseWin, text="Category",bg="Light Blue")
         VCLab3.grid(row = 3, column=0,padx = 5, pady=5 )
-        VCCat =Label(self.ViewCourseWin, text=self.courseListinfo[3])
+        VCCat =Label(self.ViewCourseWin, text=cat) #self.courseListinfo[3])
         VCCat.grid(row = 3, column=1,padx = 5, pady=5 )
 
         VCLab4 =Label(self.ViewCourseWin, text="Estimatied Number of Students",bg="Light Blue")
         VCLab4.grid(row = 4, column=0,padx = 5, pady=5 )
-        VCNum =Label(self.ViewCourseWin, text=self.courseListinfo[4])
+        VCNum =Label(self.ViewCourseWin, text=self.courseListinfo[0][1])
         VCNum.grid(row = 4, column=1,padx = 5, pady=5 )
 
         VCBackBut=Button(self.ViewCourseWin, text="Back", command=self.VCBack)
