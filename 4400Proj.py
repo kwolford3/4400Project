@@ -327,6 +327,7 @@ class CS4400:
         #self.registerWin.withdraw()
         self.Main_pageWin1 = Toplevel()
         self.Main_pageWin1.title("Main Page")
+        self.Main_pageWin1.minsize(width = 1000, height=500)
         #added for scrollbar
         self.Main_pageWin2 = Canvas(self.Main_pageWin1, bg = 'white')
         self.Main_pageWin2.pack(side = RIGHT, fill = BOTH, expand = True)
@@ -340,7 +341,7 @@ class CS4400:
             command = self.Main_pageWin2.yview)
         scroll.pack(side = RIGHT, fill = Y)
         self.Main_pageWin2.config(yscrollcommand = scroll.set)
-        self.Main_pageWin2.config(width=800, height=600)
+        
         #end of scrollbar
         
         self.mepagebut=Button(self.Main_pageWin, text="ME PAGE", command = self.Me_page)
@@ -1227,7 +1228,7 @@ class CS4400:
         self.applicationReportWin = Toplevel()
         self.chooseFuncWin.withdraw()
         self.applicationReportWin.title("Application Report")
-
+        self.applicationReportWin.minsize(width = 700, height=500)
         #totalFrame + label
         #totalInfoF = Frame(self.applicationReportWin)
         #totalInfoF.grid(row = 0, column = 0, columnspan = 6)
@@ -1236,16 +1237,17 @@ class CS4400:
         self.canvas = Canvas(self.applicationReportWin, bg = 'white')
         self.canvas.pack(side = RIGHT, fill = BOTH, expand = True)
         print("canvas packed")
+        self.firstFrame = Frame(self.canvas)
         #totalFrame + label
-        totalInfoF = Frame(self.canvas)
+        totalInfoF = Frame(self.firstFrame)
         totalInfoF.grid(row = 0, column = 0, columnspan = 6)
-        self.projectInfoF = Frame(self.canvas,bd= 3,bg="black")
+        self.projectInfoF = Frame(self.firstFrame,bd= 3,bg="black")
         self.projectInfoF.grid(row = 1, column = 0, columnspan = 6)
-        self.canvas_frame = self.canvas.create_window((0,0), window=self.totalInfoF, anchor = NW)
-        self.canvas_frame = self.canvas.create_window((0,-1), window=self.projectInfoF, anchor = NW)
+        self.c_frame = self.canvas.create_window((0,0), window=self.firstFrame, anchor = NW)
+        
  
-        self.totalInfoF.bind("<Configure>", self.OnFrameConfigure)
-        self.canvas.bind('<Configure>', self.FrameWidth)
+        #totalInfoF.bind("<Configure>", self.OnFrameConfigureTwo)
+        #self.canvas.bind('<Configure>', self.FrameWidthTwo)
         scroll = Scrollbar(self.canvas, orient = "vertical", 
             command = self.canvas.yview)
         scroll.pack(side = RIGHT, fill = Y)
@@ -1292,7 +1294,7 @@ class CS4400:
             appframeCounter=appframeCounter+1
 
         #the back button
-        buttonFrame = Frame(self.applicationReportWin)
+        buttonFrame = Frame(self.firstFrame)
         buttonFrame.grid(row = 2, column = 0, columnspan = 6)
 
         backButton = Button(buttonFrame, text = "Back",width = 15, command = self.Back_App_report)
@@ -1346,14 +1348,9 @@ class CS4400:
         self.catlist3=[]
         for tup in self.categories:
             self.catlist3.append(tup[0])
-       # print(catlist)
         self.cursor.close()
         db.commit()
         db.close()
-        #print(catlist3)
-        #self.catlist3=["Add cat1 here"," Add cat2 here", "No Requirement"]
-
-        ########
         
         self.ProjPageCatdrop=OptionMenu(self.projInfoFrame,self.ProjPageCat,*self.catlist3)
         self.ProjPageCatdrop.grid(row=4,column=1)
@@ -1455,12 +1452,15 @@ class CS4400:
         self.APAClist =[]
 
     def submitNewProject(self):
-        # need to check that all fields are filled out (will need to use get finction)
-        # need to check that thype of number of students is an interger
         #need to pput all of this in a try an except
-        #chekc that nothing is == to "please select"
-        # if any of these fail RETURN an error message box
-        
+        if len(self.projName.get())==0 or len(self.advisor.get())==0 or len(self.advisorEm.get())==0 or len(self.descript.get())==0 or len(self.ProjPageDes.get())==0:
+            return messagebox.showerror("OOps!","Please fill in all fields")
+        if self.estNumStud.get()==0:
+            return messagebox.showerror("OOps!","Estimated Number of Students cannot be 0")
+        if self.ProjPageMaj.get() == "Please Select" or self.ProjPageYr.get() == "Please Select" or self.ProjPageDept.get() == "Please Select":
+            return messagebox.showerror("OOps!","Please fill in all fields")
+        if not self.APAClist and self.ProjPageCat.get() == "Please Select":
+            return messagebox.showerror("OOps!","Please fill in all fields")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
         sql = "INSERT into Project (Pname, Num_Students, Aname, Aemail, Description, DesigName) VALUES(%s,%s,%s,%s,%s,%s)"
@@ -1473,7 +1473,10 @@ class CS4400:
         #Categories
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
-        self.APAClist.append(self.ProjPageCat1.get())
+        if len(self.APAClist) >=1:
+            self.APAClist.append(self.ProjPageCat1.get())
+        elif not self.APAClist:
+            self.APAClist.append(self.ProjPageCat.get())
         self.FinalApAClist=[]
         #print(self.APAClist)
         for item in self.APAClist:
@@ -1514,8 +1517,8 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        print("requires added")
-
+        self.addProjectWin.withdraw()
+        self.ChooseFunc()
     def CreateProjAddCat(self):
         #print("adding a cat for adding a project")
         if self.ProjPageCat.get() == "Please Select":
@@ -1618,8 +1621,8 @@ class CS4400:
         newInstructorEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.newInstructor)
         newInstructorEnt.grid(row=2, column =1)
 
-        self.estNumStudents = IntVar()
-        self.estNumStudentsEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.estNumStudents)
+        self.numofstuds = IntVar()
+        self.estNumStudentsEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.numofstuds)
         self.estNumStudentsEnt.grid(row=5, column =1)
 
         self.AddCourseCat = StringVar()
@@ -1675,12 +1678,24 @@ class CS4400:
         submitButton.grid(row = 0,column = 1,  sticky = E)
 
         self.totalAClist=[]
-        self.totalAClist.append(self.AddCourseCat.get())
+        #self.totalAClist.append(self.AddCourseCat.get())
 
     def submitNewCourse(self):
-        print("submitting course")
+        if len(self.newCourseNum.get())==0 or len(self.newCourseName.get())==0 or len(self.newInstructor.get())==0:
+            return messagebox.showerror("OOps!","Please fill in all fields")
+        if self.numofstuds.get()==0:
+            return messagebox.showerror("OOps!","Estimated Number of Students cannot be 0")
+        if self.AACDes.get()=="Please Select":
+            return messagebox.showerror("OOps!","Please fill in all fields")
+        if not self.totalAClist and self.AddCourseCat.get() == "Please Select":
+            return messagebox.showerror("OOps!","Please fill in all fields")
         self.FinalCClist=[]
-        #print(self.APAClist)
+        print(self.totalAClist)
+        if not self.totalAClist:
+            self.totalAClist.append(self.AddCourseCat.get())
+        elif len(self.totalAClist) >=1:
+            self.totalAClist.append(self.AddCourseCat1.get())
+        
         for item in self.totalAClist:
             if item != "Please Select":
                 if item not in self.FinalCClist:
@@ -1688,9 +1703,8 @@ class CS4400:
         print(self.FinalCClist)
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
-        sql = "INSERT into Course(Cnum, Cname, Instructor, CnumStud, DesigName) \
-              VALUES(%s, %s, %s, %s, %s)"
-        self.cursor.execute(sql, (self.newCourseNum.get(), self.newCourseName.get(), self.newInstructor.get(), self.estNumStudents.get(), self.AACDes.get()))
+        sql = "INSERT into Course(Cnum, Cname, Instructor, CnumStud, DesigName) VALUES(%s, %s, %s, %s, %s)"
+        self.cursor.execute(sql, (self.newCourseNum.get(), self.newCourseName.get(), self.newInstructor.get(), self.numofstuds.get(), self.AACDes.get()))
         self.cursor.close()
         db.commit()
         db.close()
@@ -1703,7 +1717,9 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        print("got to the end")
+        self.addCourseWin.withdraw()
+        self.ChooseFunc()
+        
     def Add_Course_Cat(self):
         #print("Adding Course")
 
@@ -1781,6 +1797,11 @@ class CS4400:
         self.Main_pageWin2.itemconfig(self.canvas_frame, width = canvas_width)
     def OnFrameConfigure(self, event):
         self.Main_pageWin2.configure(scrollregion=self.Main_pageWin2.bbox("all"))
+    def FrameWidthTwo(self, event):
+        canvas_width = event.width
+        self.canvas.itemconfig(self.c_frame, width = canvas_width)
+    def OnFrameConfigureTwo(self, event):
+        self.canvas.configure(scrollregion=self.canvas.bbox("all"))
     
     
 
