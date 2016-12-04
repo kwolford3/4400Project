@@ -914,6 +914,11 @@ class CS4400:
         major = self.EditPageMaj.get()
         year = self.EditPageYr.get()
         username = self.user.get()
+        if major == "Please Select" or year == "Please Select":
+            messagebox.showerror("Invalid Selection","Please fill out both the 'Major' and 'Year' fields.")
+            return("Done")
+        else:
+            pass
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql = "SELECT Dname from Major where Mname = %s"
