@@ -909,22 +909,35 @@ class CS4400:
         self.meWin.withdraw()
         self.Main_page()
 
-# supposed to run every time the option menu is selected in edit profile but is not!!!!
-    def dept(self,v):
+    def dept(self):
+        #sets department name on Edit Profile page
+        major = self.EditPageMaj.get()
+        year = self.EditPageYr.get()
+        username = self.user.get()
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql = "SELECT Dname from Major where Mname = %s"
-        cursor.execute(sql,(v))
-        self.dp=cursor.fetchall()
- #       self.dp=self.dp[0]
+        cursor.execute(sql,major)
+        dlist = cursor.fetchall()
+        dept = dlist[0][0]
         cursor.close()
         db.commit()
         db.close()
-        print(self.dp)
+        self.EditPageDept.set(dept)
+        
+        #updates Year and Major after student changes it on Edit Profile page
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "UPDATE Student SET Mname=%s,Year=%s WHERE UserName = %s"
+        cursor.execute(sql,(major,year,username))
+        cursor.close()
+        db.commit()
+        db.close()
+        print("Done updating Dept; Major and Year changes submitted to database")
 
-# need ot get option menu to run every time the menu is changed
+
     def Edit_profile(self):
-        # GETTING MAJOR LIST!!!
+        #gets list of all majors
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql = "SELECT Mname from Major"
@@ -937,7 +950,7 @@ class CS4400:
         db.commit()
         db.close()
 
-        #called by Me Page
+        #creates Edit Proile Page; called by Me Page
         self.meWin.withdraw()
         self.editWin = Toplevel()
         self.editWin.title("Edit Profile")
@@ -947,26 +960,25 @@ class CS4400:
         yearLab.grid(row=1,column=0)
         deptLab= Label(self.editWin,text="Department:")
         deptLab.grid(row=2,column=0)
+        self.EditPageDept = StringVar()
+        self.SQLdeptLab = Label(self.editWin,textvariable = self.EditPageDept)
+        self.SQLdeptLab.grid(row=2,column=1)
 
         self.EditPageMaj=StringVar()
-        self.EditPageMaj.set("Please Select")
-        #USE SQL to call list of major names called self.majlist
-        
-        self.EditPageMajdrop=OptionMenu(self.editWin,self.EditPageMaj,*self.majlist, command=self.dept(self.EditPageMaj.get()))
+        self.EditPageMaj.set("Please Select")        
+        self.EditPageMajdrop=OptionMenu(self.editWin,self.EditPageMaj,*self.majlist)
         self.EditPageMajdrop.grid(row=0,column=1)
-
         self.EditPageYr=StringVar()
         self.EditPageYr.set("Please Select")
         self.yrlist=["Freshman","Sophomore","Junior","Senior"]
         self.EditPageYrdrop=OptionMenu(self.editWin,self.EditPageYr,*self.yrlist)
         self.EditPageYrdrop.grid(row=1,column=1)
 
-        #USE SQL to fill in the department based on the major
-
-        #Back button and submit data
         self.backBut = Button(self.editWin, text = "Back", command = self.EditBack)
         self.backBut.grid(row=3, column=0)
         self.editWin.deiconify()
+        self.submitBut = Button(self.editWin, text = "Submit Changes",command=self.dept)
+        self.submitBut.grid(row=3,column=1)
         
     
         
