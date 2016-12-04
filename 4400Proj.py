@@ -781,6 +781,7 @@ class CS4400:
 
         self.Main_pageWin1 = Toplevel()
         self.Main_pageWin1.title("Main Page")
+	self.Main_pageWin1.minsize(width = 1000, height=500)
         #added for scrollbar
         self.Main_pageWin2 = Canvas(self.Main_pageWin1, bg = 'white')
         self.Main_pageWin2.pack(side = RIGHT, fill = BOTH, expand = True)
