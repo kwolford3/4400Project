@@ -1737,6 +1737,7 @@ class CS4400:
         self.addCourseWin.withdraw()
         self.ChooseFunc()
         
+        
     def Add_Course_Cat(self):
         #print("Adding Course")
 
@@ -1746,8 +1747,6 @@ class CS4400:
         if self.ACrow == 4 : #first run around
             self.totalAClist.append(self.AddCourseCat.get())
             self.AddCC.config(state="disabled")
-
-        
 
  #       self.ACrow=self.ACrow+1
      
@@ -1782,12 +1781,22 @@ class CS4400:
         self.ACBut = Button(self.courseInfoFrame, text = "Add Category",width = 15, command = self.Add_Course_Cat)
         self.ACBut.grid(row = self.ACrow,column = 2 ,  sticky = E)
 
-        self.estNumStudentsEnt.destroy()
+        #if self.ACrow ==4: #first time around
+#            self.estNumStudents1 = IntVar()
+#            self.estNumStudents1.set(self.numofstuds.get())
+#            var = self.estNumStudents1.get()
+#        else:
 
-        self.estNumStudents1 = StringVar()
-        self.estNumStudents1.set(self.estNumStudents.get())
+
+        var = self.numofstuds.get()
+        self.numofstuds= IntVar()
+        self.numofstuds.set(var)
+            
+            
+
+        self.estNumStudentsEnt.destroy()
         
-        self.estNumStudentsEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.estNumStudents1)
+        self.estNumStudentsEnt =Entry(self.courseInfoFrame, width =30, textvariable = self.numofstuds) #estNumStudents1)
         self.estNumStudentsEnt.grid(row=self.ACrow+1, column =1)
         
         self.estimatedNumStudentsLab.destroy()
