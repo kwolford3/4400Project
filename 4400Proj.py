@@ -1284,7 +1284,7 @@ class CS4400:
         #self.projectInfoF = Frame(self.applicationReportWin,bd= 3,bg="black")
         #self.projectInfoF.grid(row = 1, column = 0, columnspan = 6)
 
-        projectLab = Label(self.projectInfoF, text="Project",width=20,bg="Light Blue")
+        projectLab = Label(self.projectInfoF, text="Project",width=30,bg="Light Blue")
         projectLab.grid(row =0, column = 0, sticky=W,padx=3,pady=1)
 
         numLab = Label(self.projectInfoF, text="Number of Applications",width=20,bg="Light Blue")
@@ -1296,22 +1296,85 @@ class CS4400:
         top3Lab = Label(self.projectInfoF, text="Top 3 Major",width=20,bg="Light Blue")
         top3Lab.grid(row =0, column = 3, sticky=W,padx=3,pady=1)
 
-        #SQL stuff will provide the info
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Pname, COUNT(Pname) FROM Application"
+        cursor.execute(sql)
+        self.numApplications=cursor.fetchall()
+
+        cursor.close()
+        db.commit()
+        db.close()
+
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Status, COUNT(Status) FROM Application WHERE Status = 'Accepted' GROUP BY Status"
+        cursor.execute(sql)
+        numofAccepted=cursor.fetchall()
+
+        cursor.close()
+        db.commit()
+        db.close()
+
+        ACCEPTAPPS = str(numofAccepted[0][1])
+        TOTALAPP = str(self.numApplications[0][1])
+        x = "Applications in total:"+ TOTALAPP + ", Accepted " +ACCEPTAPPS+ " applications"
+        
+        totAppLab = Label(totalInfoF, text=x)
+        totAppLab.grid(row =0, column = 0) 
+        
+        #stuff for table
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Pname, COUNT(Pname) FROM Application GROUP BY Pname"
+        cursor.execute(sql)
+        PnameInfo =cursor.fetchall()
+
+        cursor.close()
+        db.commit()
+        db.close()
+
+        # acceptance rate
+        db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+        cursor = db.cursor()
+        sql = "SELECT Pname, Status, COUNT(Status) FROM Application WHERE Status='Accepted' GROUP BY Pname"
+        cursor.execute(sql)
+        AcceptRateForSpecificProject =cursor.fetchall()
+
+        cursor.close()
+        db.commit()
+        db.close()
+
+        listOfAccept = []
+        for tup in AcceptRateForSpecificProject:
+            for tus in PnameInfo:
+                if tup[0] == tus[0]:
+                    acceptanceRateforProject= tup[2]/tus[1]
+                    listOfAccept.append([tus[0], acceptanceRateforProject])
+ #                   listOfAccept.append(acceptanceRateforProject)
+
+        print(listOfAccept)
+        #num of accepted / total 
+                      
         appframeCounter=1
-        self.projNumAccToplist =[("Project A","24","75%","CS"),("Project B","25","80%","IE/MATH/CS"),("Project C","67","2%","MATH/PHYSICS/ATOM"),("Project F","5","90%","CS/HIST/SOC")]
-        for tup in self.projNumAccToplist:
+        for tup in PnameInfo:
+            for i in listOfAccept:
+                if i[0]==tup[0]:
+                    acceptrate = i[1]
+                else:
+                    acceptrate = 0
             projectName=tup[0]
             numOfApplicants=tup[1]
-            acceptrate=tup[2]
-            top3Major=tup[3]
-            lab=Label(self.projectInfoF, text =str(projectName), width=20)
+            #acceptrate=tup[2]
+    #               top3Major=tup[3]
+            lab=Label(self.projectInfoF, text =str(projectName), width=30)
             lab.grid(row=appframeCounter,column=0,sticky=W,padx=3,pady=1)
             lab=Label(self.projectInfoF, text =str(numOfApplicants), width=20)
             lab.grid(row=appframeCounter,column=1,sticky=W,padx=3,pady=1)
             lab=Label(self.projectInfoF, text =str(acceptrate), width=20)
             lab.grid(row=appframeCounter,column=2,sticky=W,padx=3,pady=1)
-            lab=Label(self.projectInfoF, text =str(top3Major), width=20)
-            lab.grid(row=appframeCounter,column=3,sticky=W,padx=3,pady=1)
+    #           lab=Label(self.projectInfoF, text =str(top3Major), width=20)
+    #           lab.grid(row=appframeCounter,column=3,sticky=W,padx=3,pady=1)
             appframeCounter=appframeCounter+1
 
         #the back button
