@@ -569,9 +569,12 @@ class CS4400:
         email = info[0][1]
         major = info[0][2]
         cursor.close()
-        print("User's year is: ",year)
-        print("User's email is: ",email)
-        print("User's major is: ",major)
+	if year == None or major == None:
+            return messagebox.showinfo("Oops","Please complete your student Profile before applying for a project")
+
+     #   print("User's year is: ",year)
+      #  print("User's email is: ",email)
+       # print("User's major is: ",major)
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql_dept = "SELECT Dname FROM Major WHERE Mname = %s;"
