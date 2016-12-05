@@ -463,7 +463,7 @@ class CS4400:
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         # This is not right, beet fo do a full outer join of these three tables
- #       sql = "SELECT Aname, Description, DesigName, Catname, Requirement, Num_Students FROM Project NATURAL JOIN Proj_Cat NATURAL JOIN Requires where Pname =%s"
+ 
         sql = "SELECT p.Aname, p.Description, p.DesigName, c.Catname, r.requirement, p.Num_Students from Project p Left JOIN Proj_Cat c on p.Pname = c.Pname Left JOIN Requires r on r.Pname = p.Pname where p.Pname=%s"
         cursor.execute(sql,(select))
         self.projinfo=cursor.fetchall()
@@ -472,7 +472,7 @@ class CS4400:
         db.close()
         count=0
         count1 =0
- #       print(self.projinfo)
+ 
         require=""
         cat = ""
         for item in self.projinfo:
@@ -549,13 +549,10 @@ class CS4400:
 
 
     def Apply_Button(self):
- #       print("applied")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         proj_name = self.projname
- #       print("Applying to: ",proj_name)
         username = self.user.get()
- #       print("User is: ",username)
         sql_email = "SELECT Year,GtEmail,Mname FROM Student WHERE UserName = %s;"
         cursor.execute(sql_email, (username))
         db.commit()
@@ -567,12 +564,7 @@ class CS4400:
 
         if year == None or major == None:
             return messagebox.showinfo("Oops","Please complete your student Profile before applying for a project")
-	#if year == None or major == None:
-#            return messagebox.showinfo("Oops","Please complete your student Profile before applying for a project")
 
-     #   print("User's year is: ",year)
-      #  print("User's email is: ",email)
-       # print("User's major is: ",major)
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql_dept = "SELECT Dname FROM Major WHERE Mname = %s;"
@@ -580,14 +572,13 @@ class CS4400:
         depts = cursor.fetchall()
         dept = depts[0][0]
         student_info = [year,major,dept]
- #       print("Dept of User's major is: ",dept)
         cursor.close()
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql_require = "SELECT Requirement FROM Requires WHERE Pname = %s;"
         cursor.execute(sql_require, (proj_name))
         requirements = cursor.fetchall()
- #       print(requirements)
+
         for req in requirements:
             if req[0] == "":
                 pass
@@ -605,16 +596,15 @@ class CS4400:
         db.commit()
         cursor.close()
         messagebox.showinfo("Success","You have applied to %s" %(proj_name))
-        #print("insert complete")
+       
 
 
 
     def Apply_Filter(self):
-       # SEARCHIN IS CASE SENSITIVE!!!!
-       # print("apply filter")
+
         thelist=[]
         final =[]
- #       print(self.MainPageRow)
+ 
         if self. MainPageRow == 0:
             thelist.append(self.MainPageCat.get())
         else:
@@ -637,7 +627,7 @@ class CS4400:
         rb = self.MainPageRB.get()
         if rb == "":
             rb="Both"
-        #print(title, year, major, des,rb, final)
+
         if major != "":
             sql = "SELECT m.Dname FROM `Major` m WHERE m.Mname=%s"
             db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
@@ -647,13 +637,12 @@ class CS4400:
             cursor.close()
             db.commit()
             db.close()
-            #print(self.dept)
             dept = self.dept[0][0]
-            #print(dept)
+            
 
         else:
             dept = ""
-        #print(title, year, major, des,rb, dept, final)
+       
 
         updated=[]
         updated1=[]
@@ -705,35 +694,41 @@ class CS4400:
                             
                 if templist == [None]: # no requirements then all projects
                     funstuff.append(proj[0])
+                    #print(proj[0])
                 else:
-                    r =[]
-                    for z in [major, year, dept]: #r is a list all entries out in by user that need to be met
-                        if z != "":
-                            r.append(z)
-                    #print("r", r)
-                    
-                    if r == []:
-                        funstuff.append(proj[0])
-                    else:
- #                       print("ran")
- #                       print(z)
-                        if major != "" and year != "":
-                            if major in templist and year in templist: #set(r) >= set(templist) :
+                        
+                       if ("Freshman" in templist or "Sophomore" in templist or "Junior" in templist or "Senior" in templist) and year != "":
+                           if len (templist) ==1 : # 
+                               if year in templist:
+                                  funstuff.append(proj[0])
+                                 # print(proj[0])
+                           if major != "":
+                               if (major in templist or dept in templist) and year in templist: #set(r) >= set(templist) : 
+                                  funstuff.append(proj[0])
+                                  
+                           elif major == "":
+                               if year in templist: #set(r) >= set(templist) :
+                                  funstuff.append(proj[0])
+                       elif ("Freshman" in templist or "Sophomore" in templist or "Junior" in templist or "Senior" in templist) and year == "":
+                           if len(templist) == 1: # has a year and thats it in proj 
+                               funstuff.append(proj[0])
+                           else:
+                               if major in templist or dept in templist:
+                                   funstuff.append(proj[0])
+                       else: # no year in proj requiremend of year ==""
+                            if major != "":
+                               if major in templist or dept in templist: #set(r) >= set(templist) :
+                                  funstuff.append(proj[0])
+                            else:
                                 funstuff.append(proj[0])
-                        if dept != "" and year != "":                              
-                            if dept in templist and year in templist :# set(templist) >= set(r):
-                                funstuff.append(proj[0])
-                        if major != "" and dept != "":
-                            if major in templist or dept in templist:
-                                funstuff.append(proj[0])
-                                
+                               
+
                                          
             for item in funstuff: #updated:
                 if (item,"Project") not in winner:
                     winner.append((item,"Project"))
 
  #           print(winner)
-            
 
                 
         if rb=="Course" or rb =="Both":
@@ -1608,7 +1603,7 @@ class CS4400:
             if item != "Please Select":
                 if item not in self.FinalApAClist:
                     self.FinalApAClist.append(item)
-        print(self.FinalApAClist)
+        #print(self.FinalApAClist)
         for n in self.FinalApAClist:
             sql = "INSERT into Proj_Cat(Pname, Catname) VALUES(%s,%s)"
             self.cursor.execute(sql,(self.projName.get(), n))
