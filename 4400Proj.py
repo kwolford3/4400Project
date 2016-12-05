@@ -41,12 +41,9 @@ class CS4400:
         db.commit()
         db.close()
    
- #       print(self.flagRet)
+
         
         if n == 1: 
- #           messagebox.showerror("Login Successful!","Login Succesful")
-            print("login successful")
-            
             
 	#if student main, if admin choose functionality
             for tup in self.flagRet:
@@ -123,7 +120,7 @@ class CS4400:
         sql = "SELECT Pname, Count(Pname) FROM Application GROUP BY Pname ORDER BY Count(Pname) DESC LIMIT 10;"
         cursor.execute(sql)
         self.projMajYearStatlist=cursor.fetchall()
-        print(self.projMajYearStatlist)
+ #       print(self.projMajYearStatlist)
         #self.projMajYearStatlist =[("Project A","34"),("Project B","55"),("Project C","67"),("Project F","69")]
         for tup in self.projMajYearStatlist:
             projectName=tup[0]
@@ -232,13 +229,13 @@ class CS4400:
             cursor.close()
             db.commit()
             db.close()
-            print("added to user")
+           
             # may need to seperate into two try statemments and add database rollback
             db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
             cursor = db.cursor()
             sql = "INSERT into Student (UserName,GtEmail) VALUES (%s,%s)"
             n =cursor.execute(sql,(username,userEmail))
-            print("added to student")
+            #print("added to student")
             cursor.close()
             db.commit()
             db.close()
@@ -319,19 +316,17 @@ class CS4400:
         db.commit()
         db.close()
 
-        self.CPlist=self.Plist+self.Clist # NEED A SCROLL BAR!!!!!!!!!!!
-        #print(self.CPlist)
-        #called by ME Page
-        #also called by a succesfull login page
+        self.CPlist=self.Plist+self.Clist 
+        
         self.loginWin.withdraw()
-        #self.registerWin.withdraw()
+       
         self.Main_pageWin1 = Toplevel()
         self.Main_pageWin1.title("Main Page")
         self.Main_pageWin1.minsize(width = 1000, height=500)
         #added for scrollbar
         self.Main_pageWin2 = Canvas(self.Main_pageWin1, bg = 'white')
         self.Main_pageWin2.pack(side = RIGHT, fill = BOTH, expand = True)
-        print("canvas packed")
+        
         self.Main_pageWin = Frame(self.Main_pageWin2, bd=3, bg='white')
         self.canvas_frame = self.Main_pageWin2.create_window((0,0), window=self.Main_pageWin, anchor = NW)
  
@@ -425,7 +420,7 @@ class CS4400:
         
         #pull al list of all courses anf projects here will need SQL
         CPframeCounter=1
-        print("we are here")              
+ #       print("we are here")              
         #self.CPlist =[("Project A","Project"),("Project B","Project"),("Course A", "Course"),("COurse B","Course"),("Project Q","Project")]
         for tup in self.CPlist:
             Name=tup[0]
@@ -442,14 +437,14 @@ class CS4400:
        # print("View")
         Name = P[0]
         typ = P[1]
-        print(Name +" Is A " + typ ) # Prints Name of Project or sourse selected
+ #       print(Name +" Is A " + typ ) # Prints Name of Project or sourse selected
         if typ == "Project":
-            print("is a Project, run view Project")
+ #           print("is a Project, run view Project")
  #           self.ProjOfInterest=Name
             self.View_Project(Name)
             
         if typ == "Course":
-            print("is a Course, run View Course")
+ #           print("is a Course, run View Course")
  #           self.CourseOfInterest=Name
             self.View_course(Name)
             
@@ -554,13 +549,13 @@ class CS4400:
 
 
     def Apply_Button(self):
-        print("applied")
+ #       print("applied")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         proj_name = self.projname
-        print("Applying to: ",proj_name)
+ #       print("Applying to: ",proj_name)
         username = self.user.get()
-        print("User is: ",username)
+ #       print("User is: ",username)
         sql_email = "SELECT Year,GtEmail,Mname FROM Student WHERE UserName = %s;"
         cursor.execute(sql_email, (username))
         db.commit()
@@ -569,8 +564,11 @@ class CS4400:
         email = info[0][1]
         major = info[0][2]
         cursor.close()
-	if year == None or major == None:
+
+        if year == None or major == None:
             return messagebox.showinfo("Oops","Please complete your student Profile before applying for a project")
+	#if year == None or major == None:
+#            return messagebox.showinfo("Oops","Please complete your student Profile before applying for a project")
 
      #   print("User's year is: ",year)
       #  print("User's email is: ",email)
@@ -582,14 +580,14 @@ class CS4400:
         depts = cursor.fetchall()
         dept = depts[0][0]
         student_info = [year,major,dept]
-        print("Dept of User's major is: ",dept)
+ #       print("Dept of User's major is: ",dept)
         cursor.close()
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
         sql_require = "SELECT Requirement FROM Requires WHERE Pname = %s;"
         cursor.execute(sql_require, (proj_name))
         requirements = cursor.fetchall()
-        print(requirements)
+ #       print(requirements)
         for req in requirements:
             if req[0] == "":
                 pass
@@ -607,7 +605,7 @@ class CS4400:
         db.commit()
         cursor.close()
         messagebox.showinfo("Success","You have applied to %s" %(proj_name))
-        print("insert complete")
+        #print("insert complete")
 
 
 
@@ -655,11 +653,13 @@ class CS4400:
 
         else:
             dept = ""
-        #print(title, year, major, des,rb, final)
+        #print(title, year, major, des,rb, dept, final)
 
         updated=[]
         updated1=[]
         winner =[]
+        yearlist=[]
+        majlist =[]
 
         if rb== "Project" or rb =="Both":
             #print("running fo project and both")
@@ -672,21 +672,67 @@ class CS4400:
             cursor.close()
             db.commit()
             db.close()
-           
-            
+            mid =[]
+            mid1=[]
+               
+            #for item in 
             for ntup in self.projstat:
                 if ntup[0]==title or title== "":
                     if ntup[1]==des or des== "":
                         if ntup[2] in final or final == []:
-                            if ntup[3] == year or ntup[3] == major or ntup[3] == dept or ntup[3]== None or (major == "" and year ==""): # what if there is no major or yer listed
-                                updated.append(ntup)
-            #print(updated)
-                                
-            for item in updated:
-                if (item[0],"Project") not in winner:
-                    winner.append((item[0],"Project"))
+                            mid.append(ntup)
+                            
+            funstuff=[]
+            #print(mid)
+            for proj in mid :
+                sql = "SELECT r.requirement from Project p Left JOIN Requires r on r.Pname = p.Pname where p.Pname =%s"
+                db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+                cursor = db.cursor()
+                cursor.execute(sql,(proj[0]))
+                self.require=cursor.fetchall()
+                cursor.close()
+                db.commit()
+                db.close()
+                templist =[]
+                # have project name already
+                
+                for item in self.require:
+                        if item != None:
+                            templist.append(item[0]) # item[0] is the project name
 
-            #print(winner)
+                            
+               # print("templist", templist) # templist is actual project requirements
+                            
+                if templist == [None]: # no requirements then all projects
+                    funstuff.append(proj[0])
+                else:
+                    r =[]
+                    for z in [major, year, dept]: #r is a list all entries out in by user that need to be met
+                        if z != "":
+                            r.append(z)
+                    #print("r", r)
+                    
+                    if r == []:
+                        funstuff.append(proj[0])
+                    else:
+ #                       print("ran")
+ #                       print(z)
+                        if major != "" and year != "":
+                            if major in templist and year in templist: #set(r) >= set(templist) :
+                                funstuff.append(proj[0])
+                        if dept != "" and year != "":                              
+                            if dept in templist and year in templist :# set(templist) >= set(r):
+                                funstuff.append(proj[0])
+                        if major != "" and dept != "":
+                            if major in templist or dept in templist:
+                                funstuff.append(proj[0])
+                                
+                                         
+            for item in funstuff: #updated:
+                if (item,"Project") not in winner:
+                    winner.append((item,"Project"))
+
+ #           print(winner)
             
 
                 
@@ -707,7 +753,7 @@ class CS4400:
                         if ntup[2] in final or final == []:
 #                            if ntup[3] == year or ntup[3] == major or ntup[3] == dept or ntup[3]== None or (major == "" and year ==""): # what if there is no major or yer listed
                                 updated1.append(ntup)
-           # print("here:  ", updated1)
+         
 
             for item in updated1:
                 if (item[0],"Course") not in winner:
@@ -744,7 +790,7 @@ class CS4400:
             return messagebox.showerror("OOPS",text)
         
     def Reset_Filter(self):
-        print("Reset Filter")
+        #print("Reset Filter")
         self.Main_pageWin1.destroy()
         self.Main_page()
         
@@ -777,18 +823,16 @@ class CS4400:
             
         
         self.Main_pageWin1.destroy()
- 
-        
- #       self.Main_pageWin = Toplevel()
-#        self.Main_pageWin.title("Main Page")
-
+    
         self.Main_pageWin1 = Toplevel()
         self.Main_pageWin1.title("Main Page")
-	self.Main_pageWin1.minsize(width = 1000, height=500)
-        #added for scrollbar
+        self.Main_pageWin1.minsize(width = 1000, height=500)
+        
+
+ 
         self.Main_pageWin2 = Canvas(self.Main_pageWin1, bg = 'white')
         self.Main_pageWin2.pack(side = RIGHT, fill = BOTH, expand = True)
-        print("canvas packed")
+       # print("canvas packed")
         self.Main_pageWin = Frame(self.Main_pageWin2, bd=3, bg='white')
         self.canvas_frame = self.Main_pageWin2.create_window((0,0), window=self.Main_pageWin, anchor = NW)
  
@@ -942,7 +986,7 @@ class CS4400:
         cursor.close()
         db.commit()
         db.close()
-        print("Done updating Dept; Major and Year changes submitted to database")
+        #print("Done updating Dept; Major and Year changes submitted to database")
 
 
     def Edit_profile(self):
@@ -1050,9 +1094,6 @@ class CS4400:
         self.Me_page()
         
 
-    def View_proj(self):
-        #called by
-        print ("view project page")
 
     def View_course(self,select):
        
@@ -1066,7 +1107,7 @@ class CS4400:
         db.close()
        
         count1 =0
-        print(self.courseListinfo)
+ #       print(self.courseListinfo)
         # need to check if a course must have a category associated with it
        
         cat = ""
@@ -1212,7 +1253,7 @@ class CS4400:
         z= "Accepted"
         for i in self.pendingTuple:
             if value == i[0]:
-                print(i[0])
+               # print(i[0])
                 pName = i[1]
                 aEmail = i[5]
                 db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
@@ -1232,7 +1273,7 @@ class CS4400:
         z= "Rejected"
         for i in self.pendingTuple:
             if value == i[0]:
-                print(i[0])
+ #               print(i[0])
                 pName = i[1]
                 aEmail = i[5]
                 db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
@@ -1257,7 +1298,7 @@ class CS4400:
         #added for scrollbar
         self.canvas = Canvas(self.applicationReportWin, bg = 'white')
         self.canvas.pack(side = RIGHT, fill = BOTH, expand = True)
-        print("canvas packed")
+        #print("canvas packed")
         self.firstFrame = Frame(self.canvas)
         #totalFrame + label
         totalInfoF = Frame(self.firstFrame)
@@ -1353,7 +1394,7 @@ class CS4400:
                     listOfAccept.append([tus[0], acceptanceRateforProject])
  #                   listOfAccept.append(acceptanceRateforProject)
 
-        print(listOfAccept)
+       # print(listOfAccept)
         #num of accepted / total 
                       
         appframeCounter=1
@@ -1390,7 +1431,7 @@ class CS4400:
         self.chooseFuncWin.withdraw()
         self.addProjectWin = Toplevel() 
         self.addProjectWin.title("Add a Project")
-        print("admin add project")
+ #       print("admin add project")
         self.projInfoFrame = Frame(self.addProjectWin)
         self.projInfoFrame.grid(row = 0, column = 0, columnspan = 6)
         #LABELS
@@ -1553,7 +1594,7 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        print("project added")
+ #       print("project added")
         #Categories
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
@@ -1574,7 +1615,7 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        print("proj cat added")
+ #       print("proj cat added")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
         if self.ProjPageMaj.get() != "No Requirement":
@@ -1583,7 +1624,7 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        print("requires added")
+ #       print("requires added")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
         if self.ProjPageYr.get() != "No Requirement":
@@ -1592,7 +1633,7 @@ class CS4400:
         self.cursor.close()
         db.commit()
         db.close()
-        print("proj cat added")
+ #       print("proj cat added")
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
         if self.ProjPageDept.get() != "No Requirement":
@@ -1774,7 +1815,7 @@ class CS4400:
         if not self.totalAClist and self.AddCourseCat.get() == "Please Select":
             return messagebox.showerror("OOps!","Please fill in all fields")
         self.FinalCClist=[]
-        print(self.totalAClist)
+        #print(self.totalAClist)
         if not self.totalAClist:
             self.totalAClist.append(self.AddCourseCat.get())
         elif len(self.totalAClist) >=1:
@@ -1784,7 +1825,7 @@ class CS4400:
             if item != "Please Select":
                 if item not in self.FinalCClist:
                     self.FinalCClist.append(item)
-        print(self.FinalCClist)
+        #print(self.FinalCClist)
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         self.cursor = db.cursor()
         sql = "INSERT into Course(Cnum, Cname, Instructor, CnumStud, DesigName) VALUES(%s, %s, %s, %s, %s)"
@@ -1882,7 +1923,7 @@ class CS4400:
           for item in self.totalAClist:
               if item != "Please Select":
                   self.FinalACCatlist.append(item)
-          print(self.FinalACCatlist)                 
+ #         print(self.FinalACCatlist)                 
           return messagebox.showerror("OOps!","You have reached the maximum amount of Categories that can be added")
 #Next two for scroll bar
     def FrameWidth(self, event):
