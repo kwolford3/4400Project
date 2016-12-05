@@ -42,6 +42,8 @@ class CS4400:
         db.close()
    
 
+
+
         
         if n == 1: 
             
@@ -1292,7 +1294,7 @@ class CS4400:
         #added for scrollbar
         self.canvas = Canvas(self.applicationReportWin, bg = 'white')
         self.canvas.pack(side = RIGHT, fill = BOTH, expand = True)
-        print("canvas packed")
+        #print("canvas packed")
         self.firstFrame = Frame(self.canvas)
         #totalFrame + label
         totalInfoF = Frame(self.firstFrame)
