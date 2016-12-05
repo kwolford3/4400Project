@@ -670,7 +670,7 @@ class CS4400:
                     if ntup[1]==des or des== "":
                         if ntup[2] in final or final == []:
                             mid.append(ntup)
-                            
+ #           print(mid)                           
             funstuff=[]
             #print(mid)
             for proj in mid :
@@ -693,6 +693,8 @@ class CS4400:
                # print("templist", templist) # templist is actual project requirements
                             
                 if templist == [None]: # no requirements then all projects
+                    funstuff.append(proj[0])
+                if year == "" and major =="":
                     funstuff.append(proj[0])
                     #print(proj[0])
                 else:
