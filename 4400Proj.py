@@ -1286,14 +1286,11 @@ class CS4400:
         self.chooseFuncWin.withdraw()
         self.applicationReportWin.title("Application Report")
         self.applicationReportWin.minsize(width = 700, height=500)
-        #totalFrame + label
-        #totalInfoF = Frame(self.applicationReportWin)
-        #totalInfoF.grid(row = 0, column = 0, columnspan = 6)
 
         #added for scrollbar
         self.canvas = Canvas(self.applicationReportWin, bg = 'white')
         self.canvas.pack(side = RIGHT, fill = BOTH, expand = True)
-        #print("canvas packed")
+        print("canvas packed")
         self.firstFrame = Frame(self.canvas)
         #totalFrame + label
         totalInfoF = Frame(self.firstFrame)
@@ -1302,23 +1299,16 @@ class CS4400:
         self.projectInfoF.grid(row = 1, column = 0, columnspan = 6)
         self.c_frame = self.canvas.create_window((0,0), window=self.firstFrame, anchor = NW)
         
- 
-        #totalInfoF.bind("<Configure>", self.OnFrameConfigureTwo)
-        #self.canvas.bind('<Configure>', self.FrameWidthTwo)
+
         scroll = Scrollbar(self.canvas, orient = "vertical", 
             command = self.canvas.yview)
         scroll.pack(side = RIGHT, fill = Y)
         self.canvas.config(yscrollcommand = scroll.set)
         #end of scrollbar
-
- #      self.totApps = SQL query to get the application total
- #      self.totApps = SQL query to get total of accepted applications 
+ 
         totAppLab = Label(totalInfoF, text="applications in total, accepted  applications")
         totAppLab.grid(row =0, column = 0) 
 
-        #projectInfo Frame
-        #self.projectInfoF = Frame(self.applicationReportWin,bd= 3,bg="black")
-        #self.projectInfoF.grid(row = 1, column = 0, columnspan = 6)
 
         projectLab = Label(self.projectInfoF, text="Project",width=30,bg="Light Blue")
         projectLab.grid(row =0, column = 0, sticky=W,padx=3,pady=1)
@@ -1326,10 +1316,10 @@ class CS4400:
         numLab = Label(self.projectInfoF, text="Number of Applications",width=20,bg="Light Blue")
         numLab.grid(row =0, column = 1, sticky=W,padx=3,pady=1)
 
-        acceptLab = Label(self.projectInfoF, text="Acceptance Rate",width=20,bg="Light Blue")
+        acceptLab = Label(self.projectInfoF, text="Acceptance Rate (%)",width=20,bg="Light Blue")
         acceptLab.grid(row =0, column = 2, sticky=W,padx=3,pady=1)
 
-        top3Lab = Label(self.projectInfoF, text="Top 3 Major",width=20,bg="Light Blue")
+        top3Lab = Label(self.projectInfoF, text="Top 3 Major",width=55,bg="Light Blue")
         top3Lab.grid(row =0, column = 3, sticky=W,padx=3,pady=1)
 
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
@@ -1385,32 +1375,73 @@ class CS4400:
         for tup in AcceptRateForSpecificProject:
             for tus in PnameInfo:
                 if tup[0] == tus[0]:
-                    acceptanceRateforProject= tup[2]/tus[1]
+                    acceptanceRateforProject= int((tup[2]/tus[1])* 100)
                     listOfAccept.append([tus[0], acceptanceRateforProject])
- #                   listOfAccept.append(acceptanceRateforProject)
 
-       # print(listOfAccept)
-        #num of accepted / total 
-                      
-        appframeCounter=1
-        for tup in PnameInfo:
-            for i in listOfAccept:
+
+
+        #num of accepted / total
+
+        
+        lPInfo = list(PnameInfo)
+        newList =[]
+        for tups in lPInfo:
+            new = list(tups)
+            newList.append(new)
+
+        for i in newList:
+            for tup in listOfAccept:
                 if i[0]==tup[0]:
-                    acceptrate = i[1]
-                else:
-                    acceptrate = 0
+                    i.append(tup[1])
+
+        
+        #top3Major who applied
+        Top3Maj = []
+        for project in newList:
+            
+            db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
+            cursor = db.cursor()
+            sql = "SELECT Pname,Mname,R FROM (SELECT Pname, Mname, COUNT(Mname) as R FROM(SELECT Application.Pname, Application.GtEmail, Student.Mname FROM Application LEFT JOIN Student ON Application.GtEmail = Student.GtEmail) AS T GROUP BY Mname, Pname ORDER BY Count(Mname)) AS B WHERE Pname = %s GROUP BY Mname ORDER BY R DESC LIMIT 3"
+            cursor.execute(sql,(project[0]))
+            Top3Maj=cursor.fetchall()
+
+            cursor.close()
+            db.commit()
+            db.close()
+
+
+            for proj in Top3Maj:
+                for tup in newList:
+                    if tup[0]==proj[0]:
+                        tup.append(proj[1])
+                    
+        appframeCounter=1
+        for tup in newList:
+
+            if type(tup[2]) != int and type(tup[2]) != float:
+                top3Major = tup[2:]
+                acceptrate = 0
+                majs =""
+                for thing in top3Major:
+                    majs = majs+thing + ", "
+            else:
+                acceptrate = tup[2]
+                top3Major = tup[3:]
+                majs =""
+                for thing in top3Major:
+                    majs = majs+thing + ", "
+            
+
             projectName=tup[0]
             numOfApplicants=tup[1]
-            #acceptrate=tup[2]
-    #               top3Major=tup[3]
             lab=Label(self.projectInfoF, text =str(projectName), width=30)
             lab.grid(row=appframeCounter,column=0,sticky=W,padx=3,pady=1)
             lab=Label(self.projectInfoF, text =str(numOfApplicants), width=20)
             lab.grid(row=appframeCounter,column=1,sticky=W,padx=3,pady=1)
             lab=Label(self.projectInfoF, text =str(acceptrate), width=20)
             lab.grid(row=appframeCounter,column=2,sticky=W,padx=3,pady=1)
-    #           lab=Label(self.projectInfoF, text =str(top3Major), width=20)
-    #           lab.grid(row=appframeCounter,column=3,sticky=W,padx=3,pady=1)
+            lab=Label(self.projectInfoF, text =majs, width=55)
+            lab.grid(row=appframeCounter,column=3,sticky=W,padx=3,pady=1)
             appframeCounter=appframeCounter+1
 
         #the back button
