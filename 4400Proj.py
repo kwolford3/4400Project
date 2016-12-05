@@ -42,8 +42,6 @@ class CS4400:
         db.close()
    
 
-
-
         
         if n == 1: 
             
@@ -109,7 +107,7 @@ class CS4400:
         self.popProjectFrame.grid(row = 1, column = 0, columnspan = 6)
 
         #Labels for Project, # of Applicants 
-        projectLabel =Label(self.popProjectFrame, text="Project",width = 20,bg="Light Blue")
+        projectLabel =Label(self.popProjectFrame, text="Project",width = 40,bg="Light Blue")
         projectLabel.grid(row = 0, column=0,sticky=W,padx=3,pady=1)
 
         numApplicantsLabel =Label(self.popProjectFrame, text="Number of Applicants",width = 20,bg="Light Blue")
@@ -128,7 +126,7 @@ class CS4400:
             projectName=tup[0]
             numApplicants=tup[1]
             
-            lab=Label(self.popProjectFrame, text =str(projectName), width=20)
+            lab=Label(self.popProjectFrame, text =str(projectName), width=40)
             lab.grid(row=popProjectframeCounter,column=0,sticky=W,padx=3,pady=1)
             
             lab=Label(self.popProjectFrame, text =str(numApplicants), width=20)
@@ -387,7 +385,7 @@ class CS4400:
         self.MainPageYear=StringVar()
         self.MainPageYear.set("Please Select")
         
-        self.yearlist=["Freshman","Sophmore","Junior","Senior"]
+        self.yearlist=["Freshman","Sophomore","Junior","Senior"]
         self.MainPageYeardrop=OptionMenu(self.Main_pageWin,self.MainPageYear,*self.yearlist)
         self.MainPageYeardrop.grid(row=4,column=1)
 
@@ -409,8 +407,6 @@ class CS4400:
  #       self.canvasframe
         #Course Project List
         
-        
- 
 # 
         ##end of scroll
         self.CPframe=Frame(self.Main_pageWin,bd= 3,bg="black")
@@ -592,12 +588,15 @@ class CS4400:
                     return("Done")        
         db = pymysql.connect(host="academic-mysql.cc.gatech.edu", db="cs4400_Team_64", user="cs4400_Team_64", passwd="yghz7eph")
         cursor = db.cursor()
-        sql_insert = "INSERT INTO Application(Date,Pname,GtEmail) VALUES (%s,%s,%s);"
-        date = datetime.datetime.now()
-        cursor.execute(sql_insert,("%s-%s-%s" %(date.year,date.month,date.day),proj_name,email))
-        db.commit()
-        cursor.close()
-        messagebox.showinfo("Success","You have applied to %s" %(proj_name))
+        try:
+            sql_insert = "INSERT INTO Application(Date,Pname,GtEmail) VALUES (%s,%s,%s);"
+            date = datetime.datetime.now()
+            cursor.execute(sql_insert,("%s-%s-%s" %(date.year,date.month,date.day),proj_name,email))
+            db.commit()
+            cursor.close()
+            messagebox.showinfo("Success","You have applied to %s" %(proj_name))
+        except:
+            return messagebox.showerror("Ooops","You have already applied to this project")
        
 
 
@@ -1289,7 +1288,7 @@ class CS4400:
         self.applicationReportWin = Toplevel()
         self.chooseFuncWin.withdraw()
         self.applicationReportWin.title("Application Report")
-        self.applicationReportWin.minsize(width = 700, height=500)
+        self.applicationReportWin.minsize(width = 1500, height=500)
 
         #added for scrollbar
         self.canvas = Canvas(self.applicationReportWin, bg = 'white')
